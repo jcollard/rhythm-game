@@ -139,11 +139,15 @@ public class BeatMap
 
     public Beat addNote(Note toAdd, long cursor)
     {
+        Beat beat = null;
         if (beats.ContainsKey(cursor))
         {
-            return beats[cursor];
+            beat = beats[cursor];
         }
-        Beat beat = new Beat(cursor);
+        else
+        {
+            beat = new Beat(cursor);
+        }
         beat.notes.Add(toAdd);
         beats[cursor] = beat;
         notify();

@@ -5,9 +5,8 @@ using UnityEngine.UI;
 
 public class BeatMapper : MonoBehaviour, Observer
 {
-    public BeatMap beatMap = new BeatMap(60);
+    public BeatMap beatMap = new BeatMap(120);
     public int beatsVisible = 4;
-    public int initialBPM = 240;
 
     public bool isPlaying = false;
     public float songPosition = 0;
@@ -26,19 +25,6 @@ public class BeatMapper : MonoBehaviour, Observer
     // Use this for initialization
     void Start()
     {
-        beatMap.bpm = initialBPM;
-        beatMap.setCursor(BeatMap.BEAT * 5);
-        beatMap.addNote(new Note(NoteInput.Up));
-        beatMap.nextBeat();
-        beatMap.addNote(new Note(NoteInput.Left));
-        beatMap.nextBeat();
-        beatMap.addNote(new Note(NoteInput.Down));
-        beatMap.nextBeat();
-        beatMap.addNote(new Note(NoteInput.Triangle));
-        beatMap.nextBeat();
-        beatMap.addNote(new Note(NoteInput.Circle));
-        beatMap.nextBeat();
-        beatMap.addNote(new Note(NoteInput.X));
 
         beatMap.registerObserver(this);
         beatMap.setCursor(0);
@@ -49,8 +35,6 @@ public class BeatMapper : MonoBehaviour, Observer
         noteToPosition.Add(NoteInput.Triangle, positions.TRIANGLE.position);
         noteToPosition.Add(NoteInput.Circle, positions.CIRCLE.position);
         noteToPosition.Add(NoteInput.X, positions.X.position);
-
-        
 
     }
 
@@ -131,5 +115,12 @@ public class BeatMapper : MonoBehaviour, Observer
     {
         currentPosition.text =  "" + beatMap.getCursor() / BeatMap.BEAT + "." + ("" + beatMap.getCursor() % 1000).PadRight(3, '0');
         songPosition = (beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMap.bpm));
+    }
+
+    public void addNote(NoteInput type)
+    {
+        //TODO: Use NoteFactory
+        Note n = new Note(type);
+        beatMap.addNote(n);
     }
 }

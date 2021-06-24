@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class ControlsHelper : MonoBehaviour
 {
+    [Header("Position Buttons")]
+    public InputField currentPosition;
     public Button prevBeat;
     public Button prevHalfBeat;
     public Button prevQuarterBeat;
@@ -13,11 +15,20 @@ public class ControlsHelper : MonoBehaviour
     public Button nextHalfBeat;
     public Button nextQuarterBeat;
 
+    [Header("Play Controls")]
     public Button playButton;
     public Button stopButton;
     public Button pauseButton;
 
-    public InputField currentPosition;
+    [Header("Add Controls")]
+    public Button upButton;
+    public Button leftButton;
+    public Button downButton;
+    public Button triangleButton;
+    public Button circleButton;
+    public Button xButton;
+
+    [Header("Beat Mapper")]
     public BeatMapper beatMapper;
 
     void Start()
@@ -44,6 +55,13 @@ public class ControlsHelper : MonoBehaviour
             beatMapper.beatMap.setCursor(0);
         });
 
+
+        upButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.Up));
+        leftButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.Left));
+        downButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.Down));
+        triangleButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.Triangle));
+        circleButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.Circle));
+        xButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.X));
 
     }
 }
