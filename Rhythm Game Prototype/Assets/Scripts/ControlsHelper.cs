@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,7 @@ public class ControlsHelper : MonoBehaviour
     public Button nextBeat;
     public Button nextHalfBeat;
     public Button nextQuarterBeat;
+    public InputField currentPosition;
     public BeatMapper beatMapper;
 
     void Start()
@@ -22,5 +24,12 @@ public class ControlsHelper : MonoBehaviour
         nextBeat.onClick.AddListener(() => { print("nextBeat"); beatMapper.beatMap.nextBeat(); });
         nextHalfBeat.onClick.AddListener(() => beatMapper.beatMap.nextHalf());
         nextQuarterBeat.onClick.AddListener(() => beatMapper.beatMap.nextQuarter());
+
+        currentPosition.onEndEdit.AddListener((String newCursor) =>
+        {
+            float nC = float.Parse(newCursor);
+            beatMapper.beatMap.setCursor((long)(nC * BeatMap.BEAT));
+        });
+
     }
 }
