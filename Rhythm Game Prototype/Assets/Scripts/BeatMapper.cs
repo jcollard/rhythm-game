@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
-public class BeatMapper : MonoBehaviour
+public class BeatMapper : MonoBehaviour, Observer
 {
-    private BeatMap beatMap = new BeatMap(60);
+    public BeatMap beatMap = new BeatMap(60);
     public int beatsVisible = 4;
     public int initialBPM = 240;
 
@@ -13,11 +14,14 @@ public class BeatMapper : MonoBehaviour
 
     public GameObject normalNote;
     public GameObject notes;
+    public AudioSource metronome;
 
     public PositionHelper positions;
 
     public readonly Dictionary<Note, NoteController> noteControllers = new Dictionary<Note, NoteController>();
     public readonly Dictionary<NoteInput, Vector2> noteToPosition = new Dictionary<NoteInput, Vector2>();
+
+    public InputField currentPosition;
 
     // Use this for initialization
     void Start()
@@ -35,6 +39,8 @@ public class BeatMapper : MonoBehaviour
         beatMap.addNote(new Note(NoteInput.Circle));
         beatMap.nextBeat();
         beatMap.addNote(new Note(NoteInput.X));
+
+        beatMap.registerObserver(this);
         beatMap.setCursor(0);
 
         noteToPosition.Add(NoteInput.Up, positions.UP.position);
@@ -44,6 +50,8 @@ public class BeatMapper : MonoBehaviour
         noteToPosition.Add(NoteInput.Circle, positions.CIRCLE.position);
         noteToPosition.Add(NoteInput.X, positions.X.position);
 
+        
+
     }
 
     // Update is called once per frame
@@ -52,19 +60,26 @@ public class BeatMapper : MonoBehaviour
         if (isPlaying)
         {
             songPosition += Time.deltaTime;
+
         }
 
         // Calculate the cursor position
         // (BPM * BEAT DURATION * songPosition in seconds / 60 seconds per minute) = Cursor Position
 
         long newCursorPosition = (long)((beatMap.bpm * BeatMap.BEAT * songPosition)/60);
-        beatMap.setCursor(newCursorPosition);
+        long nextClick = ((beatMap.getCursor() / 1000) + 1) * 1000;
+        if (isPlaying && newCursorPosition >= nextClick)
+        {
+            metronome.Play();
+        }
+
+        //beatMap.setCursor(newCursorPosition);
         drawBeats();
     }
 
     public void drawBeats()
     {
-        drawBeats(beatMap.getCursor(), beatMap.getCursor() + beatsVisible * BeatMap.BEAT);
+        drawBeats(beatMap.getCursor() - 2 * BeatMap.BEAT, beatMap.getCursor() + beatsVisible * BeatMap.BEAT);
     }
 
     public void drawBeats(long startBeat, long endBeat)
@@ -91,7 +106,6 @@ public class BeatMapper : MonoBehaviour
                 newNote.gameObjectRef = gameObject;
                 newNote.transform.parent = notes.transform;
                 newNote.name = "" + n.input + " @" + b.position;
-                newNote.transform.position = new Vector3(0, 0, 0);
                 newNote.startPosition = positions.CENTER.position;
                 newNote.endPosition = noteToPosition[n.input];
 
@@ -113,4 +127,9 @@ public class BeatMapper : MonoBehaviour
         }
     }
 
+    public void doUpdate()
+    {
+        currentPosition.text =  "" + beatMap.getCursor() / BeatMap.BEAT + "." + ("" + beatMap.getCursor() % 1000).PadRight(3, '0');
+        songPosition = (beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMap.bpm));
+    }
 }

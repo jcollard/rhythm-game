@@ -11,10 +11,14 @@ public class BeatMap
     // Uses 1000 to represent 1 beat, 500 to represent 8th note, 250 to represent 16th note, etc.
     private long cursor;
     private readonly Dictionary<long, Beat> beats = new Dictionary<long, Beat>();
+    private HashSet<Observer> observers = new HashSet<Observer>();
 
     public void notify()
     {
-
+        foreach(Observer o in observers)
+        {
+            o.doUpdate();
+        }
     }
 
     public long getCursor()
@@ -24,20 +28,25 @@ public class BeatMap
 
     public void setCursor(long cursor)
     {
+        if(this.cursor == cursor)
+        {
+            return;
+        }
         this.cursor = cursor;
         notify();
     }
 
     private void prev(long duration)
     {
+        
         long diff = cursor % duration;
-        if (cursor != 0)
+        if (diff != 0)
         {
             cursor -= diff;
         }
         else
         {
-            cursor -= BEAT;
+            cursor -= duration;
         }
 
         if (cursor < 0)
@@ -50,14 +59,15 @@ public class BeatMap
     private void next(long duration)
     {
         long diff = cursor % duration;
-        if (cursor != 0)
+        if (diff != 0)
         {
             cursor += (duration - diff);
         }
         else
         {
-            cursor += BEAT;
+            cursor += duration;
         }
+        notify();
     }
 
     public void nextBeat()
@@ -143,6 +153,11 @@ public class BeatMap
     public BeatMap(int bpm)
     {
         this.bpm = bpm;
+    }
+
+    public void registerObserver(Observer o)
+    {
+        this.observers.Add(o);
     }
 
 }
