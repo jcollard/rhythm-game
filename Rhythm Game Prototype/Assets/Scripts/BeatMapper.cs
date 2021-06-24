@@ -73,7 +73,7 @@ public class BeatMapper : MonoBehaviour, Observer
             metronome.Play();
         }
 
-        //beatMap.setCursor(newCursorPosition);
+        beatMap.setCursor(newCursorPosition);
         drawBeats();
     }
 

@@ -12,16 +12,21 @@ public class ControlsHelper : MonoBehaviour
     public Button nextBeat;
     public Button nextHalfBeat;
     public Button nextQuarterBeat;
+
+    public Button playButton;
+    public Button stopButton;
+    public Button pauseButton;
+
     public InputField currentPosition;
     public BeatMapper beatMapper;
 
     void Start()
     {
-        prevBeat.onClick.AddListener(() => { print("prevBeat"); beatMapper.beatMap.prevBeat(); });
+        prevBeat.onClick.AddListener(() => beatMapper.beatMap.prevBeat());
         prevHalfBeat.onClick.AddListener(() => beatMapper.beatMap.prevHalf());
         prevQuarterBeat.onClick.AddListener(() => beatMapper.beatMap.prevQuarter());
 
-        nextBeat.onClick.AddListener(() => { print("nextBeat"); beatMapper.beatMap.nextBeat(); });
+        nextBeat.onClick.AddListener(() => beatMapper.beatMap.nextBeat());
         nextHalfBeat.onClick.AddListener(() => beatMapper.beatMap.nextHalf());
         nextQuarterBeat.onClick.AddListener(() => beatMapper.beatMap.nextQuarter());
 
@@ -30,6 +35,15 @@ public class ControlsHelper : MonoBehaviour
             float nC = float.Parse(newCursor);
             beatMapper.beatMap.setCursor((long)(nC * BeatMap.BEAT));
         });
+
+        playButton.onClick.AddListener(() => beatMapper.isPlaying = true);
+        pauseButton.onClick.AddListener(() => beatMapper.isPlaying = false);
+        stopButton.onClick.AddListener(() =>
+        {
+            beatMapper.isPlaying = false;
+            beatMapper.beatMap.setCursor(0);
+        });
+
 
     }
 }
