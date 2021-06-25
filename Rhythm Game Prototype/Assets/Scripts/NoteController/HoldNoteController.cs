@@ -27,7 +27,7 @@ public class HoldNoteController : NoteController
 
         if (percentage2 > 1 || percentage < 0)
         {
-            beatMapper.removeNote(model);
+            beatMapper.removeNoteController(model);
         }
     }
 }

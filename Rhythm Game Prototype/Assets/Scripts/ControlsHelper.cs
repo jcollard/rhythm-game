@@ -69,12 +69,12 @@ public class ControlsHelper : MonoBehaviour
         });
 
 
-        upButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.Up));
-        leftButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.Left));
-        downButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.Down));
-        triangleButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.Triangle));
-        circleButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.Circle));
-        xButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.X));
+        upButton.onClick.AddListener(() => beatMapper.handleUserInput(NoteInput.Up));
+        leftButton.onClick.AddListener(() => beatMapper.handleUserInput(NoteInput.Left));
+        downButton.onClick.AddListener(() => beatMapper.handleUserInput(NoteInput.Down));
+        triangleButton.onClick.AddListener(() => beatMapper.handleUserInput(NoteInput.Triangle));
+        circleButton.onClick.AddListener(() => beatMapper.handleUserInput(NoteInput.Circle));
+        xButton.onClick.AddListener(() => beatMapper.handleUserInput(NoteInput.X));
 
         nextFactory.onClick.AddListener(() => beatMapper.nextFactory());
         prevFactory.onClick.AddListener(() => beatMapper.prevFactory());

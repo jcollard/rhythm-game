@@ -67,12 +67,20 @@ public class NoteFactory : MonoBehaviour
     /// </summary>
     /// <param name="type">The type of input for the added Note</param>
     /// <param name="beatMap">The BeatMap to be modified</param>
-    /// <returns>For convenience, returns this Factory</returns>
-    public virtual NoteFactory addNote(NoteInput type, BeatMap beatMap)
+    /// <returns>Returns true if the Note was added and False otherwise</returns>
+    public virtual void handleUserInput(NoteInput type, BeatMapper beatMapper)
     {
         Note n = new Note(type);
-        beatMap.addNote(n);
-        return this;
+        Beat b = beatMapper.beatMap.getBeat();
+        if(b != null && b.notes.Contains(n))
+        {
+            beatMapper.beatMap.removeNote(n);
+            beatMapper.removeNoteController(n, b);
+        } else
+        {
+            beatMapper.beatMap.addNote(n);
+            beatMapper.addNoteController(n, beatMapper.beatMap.getBeat());
+        }
     }
 
     /// <summary>

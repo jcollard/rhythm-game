@@ -14,13 +14,12 @@ public class ScratchNoteFactory : NoteFactory
         NoteFactory.registerFactory(typeof(ScratchNote), this);
     }
 
-    override public NoteFactory addNote(NoteInput type, BeatMap beatMap)
+    override public void handleUserInput(NoteInput type, BeatMapper beatMapper)
     {
 
         Note n = new ScratchNote();
-        beatMap.addNote(n);
+        beatMapper.beatMap.addNote(n);
 
-        return this;
     }
 
     public override NoteController createNoteController(Note _n, Beat b, BeatMapper beatMapper)

@@ -18,24 +18,50 @@ public class HoldNoteFactory : NoteFactory
         NoteFactory.registerFactory(typeof(HoldNote), this);
     }
 
-    override public NoteFactory addNote(NoteInput type, BeatMap beatMap)
+    override public void handleUserInput(NoteInput type, BeatMapper beatMapper)
     {
-        if (first != type || start > beatMap.getCursor())
+        Beat b = beatMapper.beatMap.getBeat();
+
+        // Check to see if there is already a HoldNote here that needs
+        // to be removed
+        if (b != null)
+        {
+            Note toRemove = null;
+            foreach(Note n in b.notes)
+            {
+                if (n is HoldNote && n.input == type)
+                {
+                    toRemove = n;
+                    break;
+                }
+            }
+            if (toRemove != null)
+            {
+                beatMapper.beatMap.removeNote(toRemove);
+                beatMapper.removeNoteController(toRemove, b);
+                first = NoteInput.Null;
+                start = -1;
+                return;
+            }
+        }
+
+        if (first != type || start > beatMapper.beatMap.getCursor())
         {
             first = type;
-            start = beatMap.getCursor();
+            start = beatMapper.beatMap.getCursor();
             //TODO place Hold on selected spot
         }
         else
         {
-            Note n = new HoldNote(type, beatMap.getCursor() - start);
-            beatMap.setCursor(start);
-            beatMap.addNote(n);
+            Note n = new HoldNote(type, beatMapper.beatMap.getCursor() - start);
+            beatMapper.beatMap.setCursor(start);
+            beatMapper.beatMap.addNote(n);
+            beatMapper.addNoteController(n, beatMapper.beatMap.getBeat());
             first = NoteInput.Null;
             start = -1;
         }
 
-        return this;
+        
     }
 
     public override NoteController createNoteController(Note _n, Beat b, BeatMapper beatMapper)

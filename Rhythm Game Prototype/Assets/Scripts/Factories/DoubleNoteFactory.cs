@@ -17,8 +17,9 @@ public class DoubleNoteFactory : NoteFactory
         NoteFactory.registerFactory(typeof(DoubleNote), this);
     }
 
-    override public NoteFactory addNote(NoteInput type, BeatMap beatMap)
+    override public void handleUserInput(NoteInput type, BeatMapper beatMapper)
     {
+
         if (first == NoteInput.Null)
         {
             first = type;
@@ -27,11 +28,10 @@ public class DoubleNoteFactory : NoteFactory
         else if (first != type)
         {
             Note n = new DoubleNote(first, type);
-            beatMap.addNote(n);
+            beatMapper.beatMap.addNote(n);
             first = NoteInput.Null;
         }
 
-        return this;
     }
 
     public override NoteController createNoteController(Note _n, Beat b, BeatMapper beatMapper)

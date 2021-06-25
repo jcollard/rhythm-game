@@ -180,13 +180,42 @@ public class BeatMapper : MonoBehaviour, Observer
     /// Given a Note, Beat tuple, removes the associated NoteController from the scene
     /// </summary>
     /// <param name="tuple">The Note, Beat tuple to remove</param>
-    public void removeNote(Tuple<Note, Beat> tuple)
+    public void removeNoteController(Tuple<Note, Beat> tuple)
     {
         if (noteControllers.ContainsKey(tuple))
         {
             UnityEngine.Object.Destroy(noteControllers[tuple].gameObjectRef);
             noteControllers.Remove(tuple);
         }
+    }
+
+    /// <summary>
+    /// Given a Note and a Beat, remove the NoteController associated with it
+    /// </summary>
+    /// <param name="n">The Note to remove</param>
+    /// <param name="b">The Beat with that Note</param>
+    public void removeNoteController(Note n, Beat b)
+    {
+        removeNoteController(new Tuple<Note, Beat>(n, b));
+    }
+
+    /// <summary>
+    /// Given a Note and a Beat, add a NoteController to the scene. If
+    /// the Note, Beat combination is already present, the old value is first
+    /// removed before replacing it with the new Tuple
+    /// </summary>
+    /// <param name="n">The Note to Add</param>
+    /// <param name="b">The Beat to add</param>
+    public void addNoteController(Note n, Beat b)
+    {
+        NoteController newNote = NoteFactory.getNoteController(n, b, this);
+        Tuple<Note, Beat> key = new Tuple<Note, Beat>(n, b);
+        if (noteControllers.ContainsKey(key))
+        {
+            removeNoteController(n, b);
+        }
+        noteControllers.Add(key, newNote);
+        drawBeats();
     }
 
     /// <summary>
@@ -199,20 +228,14 @@ public class BeatMapper : MonoBehaviour, Observer
     }
 
     /// <summary>
-    /// Adds a note based on the specified NoteInput using the current noteFactory
+    /// Processes userInput for a specific NoteInput. 
     /// </summary>
     /// <param name="type">The NoteInput that was selected by the user</param>
-    public void addNote(NoteInput type)
+    public void handleUserInput(NoteInput type)
     {
         
-        NoteFactory nextNoteFactory = noteFactory.addNote(type, beatMap);
+        noteFactory.handleUserInput(type, this);
         
-        if(nextNoteFactory != noteFactory)
-        {
-            noteFactory.transform.position = new Vector2(-20, 0);
-            noteFactory = nextNoteFactory;
-            noteFactory.transform.position = factoryPosition.transform.position;
-        }
     }
 
     /// <summary>

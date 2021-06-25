@@ -254,7 +254,7 @@ public class BeatMap
     /// </summary>
     /// <param name="toAdd">The note to be added</param>
     /// <returns>The Beat containing the note that was added</returns>
-    public Beat addNote(Note toAdd)
+    public bool addNote(Note toAdd)
     {
         return addNote(toAdd, cursor);
     }
@@ -266,7 +266,7 @@ public class BeatMap
     /// <param name="toAdd">The note to be added</param>
     /// <param name="cursor">The cursor position to add the note</param>
     /// <returns>The Beat containing the note that was added</returns>
-    public Beat addNote(Note toAdd, long cursor)
+    public bool addNote(Note toAdd, long cursor)
     {
         Beat beat = null;
         if (beats.ContainsKey(cursor))
@@ -277,10 +277,56 @@ public class BeatMap
         {
             beat = new Beat(cursor);
         }
+        if (beat.notes.Contains(toAdd))
+        {
+            return false;
+        }
         beat.notes.Add(toAdd);
         beats[cursor] = beat;
         notify();
-        return beat;
+        return true;
+    }
+
+    /// <summary>
+    /// Removes the specified Note at the current cursor, if there exists an
+    /// Equal Note at the cursors Beat.
+    /// </summary>
+    /// <param name="toRemove">The Note to remove</param>
+    /// <returns>True if the BeatMap was modified otherwise False</returns>
+    public bool removeNote(Note toRemove)
+    {
+        return removeNote(toRemove, cursor);
+    }
+
+    /// <summary>
+    /// Removes the specified Note at the specified cursor, if there exists an
+    /// Equal Note at the cursors Beat.
+    /// </summary>
+    /// <param name="toRemove">The Note to remove</param>
+    /// <param name="cursor">The cursor position to check</param>
+    /// <returns>True if the BeatMap was modified otherwise False</returns>
+    public bool removeNote(Note toRemove, long cursor)
+    {
+        Beat beat = null;
+        if (beats.ContainsKey(cursor))
+        {
+            beat = beats[cursor];
+        }
+        else
+        {
+            return false;
+        }
+        if (!beat.notes.Contains(toRemove))
+        {
+            return false;
+        }
+        beat.notes.Remove(toRemove);
+        if (beat.notes.Count == 0)
+        {
+            beats.Remove(cursor);
+        }
+        notify();
+        return true;
     }
 
     /// <summary>

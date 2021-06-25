@@ -34,7 +34,7 @@ public class NoteController : MonoBehaviour
 
         if (percentage > 1.5 || percentage < 0)
         {
-            beatMapper.removeNote(model);
+            beatMapper.removeNoteController(model);
         }
     }
 
