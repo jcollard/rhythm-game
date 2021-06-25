@@ -61,13 +61,11 @@ public class NoteFactory : MonoBehaviour
 
     /// <summary>
     /// Given the NoteInput and BeatMap, attempts to create and add a new Note at
-    /// the BeatMap's current cursor position. If an equivalent Note exists at the
-    /// current beat, the BeatMap is not modified. If the BeatMap was modified, it
-    /// notifies its observers.
+    /// the BeatMapper's current cursor position. If an equivalent Note exists at the
+    /// current beat, the Note is removed from the BeatMap.
     /// </summary>
     /// <param name="type">The type of input for the added Note</param>
-    /// <param name="beatMap">The BeatMap to be modified</param>
-    /// <returns>Returns true if the Note was added and False otherwise</returns>
+    /// <param name="beatMap">The BeatMapper</param>
     public virtual void handleUserInput(NoteInput type, BeatMapper beatMapper)
     {
         Note n = new Note(type);
