@@ -36,6 +36,17 @@ public class BeatMap
         notify();
     }
 
+    public void setBPM(int bpm)
+    {
+        this.bpm = bpm;
+        notify();
+    }
+
+    public int getBPM()
+    {
+        return bpm;
+    }
+
     private void prev(long duration)
     {
         

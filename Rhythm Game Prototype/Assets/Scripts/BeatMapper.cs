@@ -153,4 +153,15 @@ public class BeatMapper : MonoBehaviour, Observer
         noteFactory.initialize();
     }
 
+    public void setBPM(int bpm)
+    {
+        beatMap.setBPM(bpm);
+        foreach(NoteController n in noteControllers.Values)
+        {
+            UnityEngine.Object.Destroy(n.gameObjectRef);
+        }
+        noteControllers.Clear();
+        drawBeats();
+    }
+
 }

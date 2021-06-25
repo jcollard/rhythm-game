@@ -34,6 +34,7 @@ public class ControlsHelper : MonoBehaviour
 
     [Header("Beat Mapper")]
     public BeatMapper beatMapper;
+    public InputField bpm;
 
     void Start()
     {
@@ -49,6 +50,11 @@ public class ControlsHelper : MonoBehaviour
         {
             float nC = float.Parse(newCursor);
             beatMapper.beatMap.setCursor((long)(nC * BeatMap.BEAT));
+        });
+
+        bpm.onEndEdit.AddListener((String newBPM) => {
+            int bpm = int.Parse(newBPM);
+            beatMapper.setBPM(bpm);
         });
 
         playButton.onClick.AddListener(() => beatMapper.isPlaying = true);
