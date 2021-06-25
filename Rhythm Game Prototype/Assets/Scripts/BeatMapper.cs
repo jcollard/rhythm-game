@@ -119,8 +119,9 @@ public class BeatMapper : MonoBehaviour, Observer
 
     public void addNote(NoteInput type)
     {
+        
         NoteFactory nextNoteFactory = noteFactory.addNote(type, beatMap);
-
+        
         if(nextNoteFactory != noteFactory)
         {
             noteFactory.transform.position = new Vector2(-20, 0);

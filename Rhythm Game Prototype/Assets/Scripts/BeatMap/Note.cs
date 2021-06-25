@@ -1,12 +1,7 @@
 ﻿using System;
 public class Note
 {
-    public static readonly Note UP = new Note(NoteInput.Up);
-    public static readonly Note LEFT = new Note(NoteInput.Up);
-    public static readonly Note DOWN = new Note(NoteInput.Up);
-    public static readonly Note TRIANGLE = new Note(NoteInput.Triangle);
-    public static readonly Note CIRCLE = new Note(NoteInput.Circle);
-    public static readonly Note X = new Note(NoteInput.X);
+
     public NoteInput input;
 
     public Note(NoteInput input)
@@ -14,6 +9,11 @@ public class Note
         this.input = input;
     }
 
+}
+
+public class ScratchNote : Note
+{
+    public ScratchNote() : base(NoteInput.Null) { }
 }
 
 public class DoubleNote : Note
