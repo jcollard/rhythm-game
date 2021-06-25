@@ -79,7 +79,6 @@ public class NoteFactory : MonoBehaviour
         } else
         {
             beatMapper.beatMap.addNote(n);
-            beatMapper.addNoteController(n, beatMapper.beatMap.getBeat());
         }
     }
 

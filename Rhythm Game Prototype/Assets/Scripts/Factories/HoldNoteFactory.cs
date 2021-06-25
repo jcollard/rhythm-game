@@ -56,7 +56,6 @@ public class HoldNoteFactory : NoteFactory
             Note n = new HoldNote(type, beatMapper.beatMap.getCursor() - start);
             beatMapper.beatMap.setCursor(start);
             beatMapper.beatMap.addNote(n);
-            beatMapper.addNoteController(n, beatMapper.beatMap.getBeat());
             first = NoteInput.Null;
             start = -1;
         }

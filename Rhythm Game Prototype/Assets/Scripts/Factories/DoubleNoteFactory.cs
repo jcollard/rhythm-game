@@ -20,6 +20,30 @@ public class DoubleNoteFactory : NoteFactory
     override public void handleUserInput(NoteInput type, BeatMapper beatMapper)
     {
 
+        Beat b = beatMapper.beatMap.getBeat();
+
+        // Check to see if there is already a HoldNote here that needs
+        // to be removed
+        if (b != null)
+        {
+            Note toRemove = null;
+            foreach (Note n in b.notes)
+            {
+                if (n is DoubleNote && (n.input == type || ((DoubleNote)n).input2 == type))
+                {
+                    toRemove = n;
+                    break;
+                }
+            }
+            if (toRemove != null)
+            {
+                beatMapper.beatMap.removeNote(toRemove);
+                beatMapper.removeNoteController(toRemove, b);
+                first = NoteInput.Null;
+                return;
+            }
+        }
+
         if (first == NoteInput.Null)
         {
             first = type;
