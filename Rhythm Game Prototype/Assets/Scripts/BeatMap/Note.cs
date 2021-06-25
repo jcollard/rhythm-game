@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// A Note represents 
+/// A Note represents a specific type of input necessary to "hit" the note.
+/// A Note must be hit on the Beat it is contained in for the given input.
 /// </summary>
 public class Note
 {
@@ -31,11 +32,18 @@ public class Note
     }
 }
 
+/// <summary>
+/// A ScratchNote is similar to a Note with the exception that it always uses the
+/// Null input.
+/// </summary>
 public class ScratchNote : Note
 {
-    public ScratchNote() : base(NoteInput.Null) { type = "Scratch"; }
+    public ScratchNote() : base(NoteInput.Scratch) { type = "Scratch"; }
 }
 
+/// <summary>
+/// A DoubleNote requires the user to press two different inputs simultaneously
+/// </summary>
 public class DoubleNote : Note
 {
     public readonly NoteInput input2;
@@ -66,6 +74,9 @@ public class DoubleNote : Note
     }
 }
 
+/// <summary>
+/// A HoldNote requires the player to press and hold an input for a specific duration
+/// </summary>
 public class HoldNote : Note
 {
     public readonly float duration;

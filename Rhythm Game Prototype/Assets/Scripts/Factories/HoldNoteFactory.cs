@@ -1,6 +1,11 @@
 ﻿using System;
 using UnityEngine;
 
+/// <summary>
+/// A HoldNoteFactory creates HoldNotes. It expects the user to make two entries.
+/// Both entries must be on the same input. The second entry must occur later
+/// than the first entry.
+/// </summary>
 public class HoldNoteFactory : NoteFactory
 {
 
@@ -10,12 +15,12 @@ public class HoldNoteFactory : NoteFactory
     private void Start()
     {
         this.displayName = "Hold";
-        NoteFactory.holdNoteFactory = this;
+        NoteFactory.registerFactory(typeof(HoldNote), this);
     }
 
     override public NoteFactory addNote(NoteInput type, BeatMap beatMap)
     {
-        if (first != type)
+        if (first != type || start > beatMap.getCursor())
         {
             first = type;
             start = beatMap.getCursor();
@@ -33,7 +38,7 @@ public class HoldNoteFactory : NoteFactory
         return this;
     }
 
-    public override NoteController drawNote(Note _n, Beat b, BeatMapper beatMapper)
+    public override NoteController createNoteController(Note _n, Beat b, BeatMapper beatMapper)
     {
         HoldNote n = (HoldNote)_n;
         GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(noteController);

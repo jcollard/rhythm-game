@@ -1,13 +1,17 @@
 ﻿using System;
 using UnityEngine;
 
+/// <summary>
+/// A ScratchNoteFactory creates ScratchNotes. The user may click on any input
+/// to add a ScratchNote.
+/// </summary>
 public class ScratchNoteFactory : NoteFactory
 {
 
     private void Start()
     {
         this.displayName = "Scratch";
-        NoteFactory.scratchNoteFactory = this;
+        NoteFactory.registerFactory(typeof(ScratchNote), this);
     }
 
     override public NoteFactory addNote(NoteInput type, BeatMap beatMap)
@@ -19,7 +23,7 @@ public class ScratchNoteFactory : NoteFactory
         return this;
     }
 
-    public override NoteController drawNote(Note _n, Beat b, BeatMapper beatMapper)
+    public override NoteController createNoteController(Note _n, Beat b, BeatMapper beatMapper)
     {
         ScratchNote n = (ScratchNote)_n;
         GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(noteController);

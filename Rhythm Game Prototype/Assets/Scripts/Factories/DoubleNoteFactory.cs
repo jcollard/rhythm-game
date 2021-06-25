@@ -1,6 +1,11 @@
 ﻿using System;
 using UnityEngine;
 
+/// <summary>
+/// A DoubleNoteFactory creates DoubleNotes. It expects the user to make two entries.
+/// Each entry must be on a unique input type. The note is added at the cursor of
+/// the BeatMap at the time of the second input.
+/// </summary>
 public class DoubleNoteFactory : NoteFactory
 {
 
@@ -9,7 +14,7 @@ public class DoubleNoteFactory : NoteFactory
     private void Start()
     {
         this.displayName = "Double";
-        NoteFactory.doubleNoteFactory = this;
+        NoteFactory.registerFactory(typeof(DoubleNote), this);
     }
 
     override public NoteFactory addNote(NoteInput type, BeatMap beatMap)
@@ -29,7 +34,7 @@ public class DoubleNoteFactory : NoteFactory
         return this;
     }
 
-    public override NoteController drawNote(Note _n, Beat b, BeatMapper beatMapper)
+    public override NoteController createNoteController(Note _n, Beat b, BeatMapper beatMapper)
     {
         DoubleNote n = (DoubleNote)_n;
         GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(noteController);
