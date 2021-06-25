@@ -11,7 +11,9 @@ public class BeatMapper : MonoBehaviour, Observer
     public bool isPlaying = false;
     public float songPosition = 0;
 
+    
     public GameObject normalNote;
+    public GameObject holdNote;
     public GameObject notes;
     public AudioSource metronome;
 
@@ -91,21 +93,10 @@ public class BeatMapper : MonoBehaviour, Observer
                 {
                     continue;
                 }
-                //TODO: Get note Factory based on note type
-                GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(normalNote);
-                NoteController newNote = gameObject.GetComponent<NoteController>();
-                noteControllers.Add(n, newNote);
-                newNote.model = n;
-                newNote.gameObjectRef = gameObject;
-                newNote.transform.parent = notes.transform;
-                newNote.name = "" + n.input + " @" + b.position;
-                newNote.startPosition = positions.CENTER.position;
-                newNote.endPosition = noteToPosition[n.input];
-
-                newNote.startTime = ((b.position - BeatMap.BEAT * beatsVisible)*60) / ((float)(BeatMap.BEAT * beatMap.bpm));
-                newNote.endTime = (b.position * 60)/((float)(BeatMap.BEAT * beatMap.bpm));
-                newNote.beatMapper = this;
                 
+                NoteController newNote = NoteFactory.getNoteController(n, b, this);
+
+                noteControllers.Add(n, newNote);
 
             }
         }
@@ -128,7 +119,9 @@ public class BeatMapper : MonoBehaviour, Observer
 
     public void addNote(NoteInput type)
     {
+        print("Note Factory: " + noteFactory);
         NoteFactory nextNoteFactory = noteFactory.addNote(type, beatMap);
+
         if(nextNoteFactory != noteFactory)
         {
             noteFactory.transform.position = new Vector2(-20, 0);
@@ -158,6 +151,7 @@ public class BeatMapper : MonoBehaviour, Observer
         noteFactory = newFactory;
         noteFactory.transform.position = factoryPosition.transform.position;
         noteFactoryName.text = noteFactory.displayName;
+        noteFactory.initialize();
     }
 
 }

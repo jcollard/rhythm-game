@@ -1,17 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
-public class NoteController : MonoBehaviour
+public class HoldNoteController : NoteController
 {
 
-    public GameObject gameObjectRef;
-    public Vector2 startPosition;
-    public Vector2 endPosition;
-    public float startTime;
-    public float endTime;
-    public BeatMapper beatMapper;
-    public Note model;
+    public GameObject startObject;
+    public GameObject endObject;
 
     void Update()
     {
@@ -22,7 +16,7 @@ public class NoteController : MonoBehaviour
 
         float percentage = (beatMapper.songPosition - startTime) / (endTime - startTime);
         float rotation = 360f * percentage;
-        
+
         transform.rotation = Quaternion.Euler(0, 0, rotation);
         transform.position = Vector2.LerpUnclamped(startPosition, endPosition, percentage);
 
@@ -31,6 +25,4 @@ public class NoteController : MonoBehaviour
             beatMapper.removeNote(model, this);
         }
     }
-
 }
-
