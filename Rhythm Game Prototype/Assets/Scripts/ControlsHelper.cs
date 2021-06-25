@@ -55,7 +55,8 @@ public class ControlsHelper : MonoBehaviour
             beatMapper.beatMap.setCursor((long)(nC * BeatMap.BEAT));
         });
 
-        bpm.onEndEdit.AddListener((String newBPM) => {
+        bpm.onEndEdit.AddListener((String newBPM) =>
+        {
             int bpm = int.Parse(newBPM);
             beatMapper.setBPM(bpm);
         });

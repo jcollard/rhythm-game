@@ -44,7 +44,7 @@ public class BeatMapper : MonoBehaviour, Observer
     /// <summary>
     /// A lookup table for noteController's that should currently be displayed
     /// </summary>
-    public readonly Dictionary<Tuple<Note, Beat>, NoteController> noteControllers = new Dictionary<Tuple<Note,Beat>, NoteController>();
+    public readonly Dictionary<Tuple<Note, Beat>, NoteController> noteControllers = new Dictionary<Tuple<Note, Beat>, NoteController>();
 
     /// <summary>
     /// A lookup table for where NoteInput's are displayed on the screen
@@ -116,7 +116,7 @@ public class BeatMapper : MonoBehaviour, Observer
         // Calculate the cursor position
         // (BPM * BEAT DURATION * songPosition in seconds / 60 seconds per minute) = Cursor Position
         // TODO: write a helper method for this calculation
-        long newCursorPosition = (long)((beatMap.getBPM() * BeatMap.BEAT * songPosition)/60);
+        long newCursorPosition = (long)((beatMap.getBPM() * BeatMap.BEAT * songPosition) / 60);
         long nextClick = ((beatMap.getCursor() / 1000) + 1) * 1000;
 
         // TODO: Add metronome on / off option
@@ -157,9 +157,9 @@ public class BeatMapper : MonoBehaviour, Observer
             return b.position >= startBeat && b.position <= endBeat;
         });
 
-        foreach(Beat b in beats)
+        foreach (Beat b in beats)
         {
-            foreach(Note n in b.notes)
+            foreach (Note n in b.notes)
             {
                 Tuple<Note, Beat> tuple = new Tuple<Note, Beat>(n, b);
                 // If this Note, Beat combo is already present, we don't need
@@ -223,7 +223,7 @@ public class BeatMapper : MonoBehaviour, Observer
     /// </summary>
     public void doUpdate()
     {
-        currentPosition.text =  "" + beatMap.getCursor() / BeatMap.BEAT + "." + ("" + beatMap.getCursor() % 1000).PadRight(3, '0');
+        currentPosition.text = "" + beatMap.getCursor() / BeatMap.BEAT + "." + ("" + beatMap.getCursor() % 1000).PadRight(3, '0');
         songPosition = (beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMap.getBPM()));
     }
 
@@ -233,9 +233,9 @@ public class BeatMapper : MonoBehaviour, Observer
     /// <param name="type">The NoteInput that was selected by the user</param>
     public void handleUserInput(NoteInput type)
     {
-        
+
         noteFactory.handleUserInput(type, this);
-        
+
     }
 
     /// <summary>
@@ -281,7 +281,7 @@ public class BeatMapper : MonoBehaviour, Observer
     public void setBPM(int bpm)
     {
         beatMap.setBPM(bpm);
-        foreach(NoteController n in noteControllers.Values)
+        foreach (NoteController n in noteControllers.Values)
         {
             UnityEngine.Object.Destroy(n.gameObjectRef);
         }
@@ -289,6 +289,6 @@ public class BeatMapper : MonoBehaviour, Observer
         drawBeats();
     }
 
-    
+
 
 }

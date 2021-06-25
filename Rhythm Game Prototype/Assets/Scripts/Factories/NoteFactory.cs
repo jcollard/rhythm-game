@@ -70,11 +70,12 @@ public class NoteFactory : MonoBehaviour
     {
         Note n = new Note(type);
         Beat b = beatMapper.beatMap.getBeat();
-        if(b != null && b.notes.Contains(n))
+        if (b != null && b.notes.Contains(n))
         {
             beatMapper.beatMap.removeNote(n);
             beatMapper.removeNoteController(n, b);
-        } else
+        }
+        else
         {
             beatMapper.beatMap.addNote(n);
         }
@@ -114,7 +115,7 @@ public class NoteFactory : MonoBehaviour
     /// </summary>
     public virtual void initialize()
     {
-        
+
     }
 
 }

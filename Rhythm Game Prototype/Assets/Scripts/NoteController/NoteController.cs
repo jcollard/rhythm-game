@@ -28,7 +28,7 @@ public class NoteController : MonoBehaviour
 
         float percentage = (beatMapper.songPosition - startTime) / (endTime - startTime);
         float rotation = 360f * percentage;
-        
+
         transform.rotation = Quaternion.Euler(0, 0, rotation);
         transform.position = Vector2.LerpUnclamped(startPosition, endPosition, percentage);
 

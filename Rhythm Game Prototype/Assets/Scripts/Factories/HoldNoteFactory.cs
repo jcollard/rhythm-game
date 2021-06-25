@@ -27,7 +27,7 @@ public class HoldNoteFactory : NoteFactory
         if (b != null)
         {
             Note toRemove = null;
-            foreach(Note n in b.notes)
+            foreach (Note n in b.notes)
             {
                 if (n is HoldNote && n.input == type)
                 {
@@ -60,7 +60,7 @@ public class HoldNoteFactory : NoteFactory
             start = -1;
         }
 
-        
+
     }
 
     public override NoteController createNoteController(Note _n, Beat b, BeatMapper beatMapper)

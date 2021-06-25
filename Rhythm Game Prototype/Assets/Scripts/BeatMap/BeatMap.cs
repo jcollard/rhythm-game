@@ -100,12 +100,12 @@ public class BeatMap
     /// <param name="bpm">The new bpm</param>
     public void setBPM(int bpm)
     {
-        if(bpm == this.bpm)
+        if (bpm == this.bpm)
         {
             return;
         }
 
-        if(bpm < 0)
+        if (bpm < 0)
         {
             this.bpm = 0;
         }

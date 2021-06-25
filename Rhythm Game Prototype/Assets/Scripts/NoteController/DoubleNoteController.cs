@@ -20,7 +20,7 @@ public class DoubleNoteController : NoteController
         }
 
         float percentage = (beatMapper.songPosition - startTime) / (endTime - startTime);
-        
+
         note0.transform.position = Vector2.LerpUnclamped(startPosition, endPosition, percentage);
         note1.transform.position = Vector2.LerpUnclamped(startPosition, endPosition2, percentage);
 
