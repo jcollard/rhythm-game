@@ -18,7 +18,16 @@ public class ScratchNoteFactory : NoteFactory
     {
 
         Note n = new ScratchNote();
-        beatMapper.beatMap.addNote(n);
+        Beat b = beatMapper.beatMap.getBeat();
+        if (b != null && b.notes.Contains(n))
+        {
+            beatMapper.beatMap.removeNote(n);
+            beatMapper.removeNoteController(n, b);
+        }
+        else
+        {
+            beatMapper.beatMap.addNote(n);
+        }
 
     }
 
