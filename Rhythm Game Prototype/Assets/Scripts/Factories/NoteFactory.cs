@@ -26,7 +26,6 @@ public class NoteFactory : MonoBehaviour
 
     public virtual NoteFactory addNote(NoteInput type, BeatMap beatMap)
     {
-        print("In original add note");
         Note n = new Note(type);
         beatMap.addNote(n);
         return this;

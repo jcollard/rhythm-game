@@ -14,7 +14,6 @@ public class HoldNoteFactory : NoteFactory
 
     override public NoteFactory addNote(NoteInput type, BeatMap beatMap)
     {
-        print("In addNote");
         if (first != type)
         {
             first = type;

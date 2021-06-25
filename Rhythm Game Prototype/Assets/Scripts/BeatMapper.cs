@@ -119,7 +119,6 @@ public class BeatMapper : MonoBehaviour, Observer
 
     public void addNote(NoteInput type)
     {
-        print("Note Factory: " + noteFactory);
         NoteFactory nextNoteFactory = noteFactory.addNote(type, beatMap);
 
         if(nextNoteFactory != noteFactory)
