@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 /// <summary>
 /// Defines the different types of inputs

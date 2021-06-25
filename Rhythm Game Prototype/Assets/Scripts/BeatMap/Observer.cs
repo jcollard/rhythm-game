@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 /// <summary>
 /// A Simple interface that allows an Observable object to update an Observer object of changes.
