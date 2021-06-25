@@ -61,7 +61,7 @@ public class BeatMapper : MonoBehaviour, Observer
         // Calculate the cursor position
         // (BPM * BEAT DURATION * songPosition in seconds / 60 seconds per minute) = Cursor Position
 
-        long newCursorPosition = (long)((beatMap.bpm * BeatMap.BEAT * songPosition)/60);
+        long newCursorPosition = (long)((beatMap.getBPM() * BeatMap.BEAT * songPosition)/60);
         long nextClick = ((beatMap.getCursor() / 1000) + 1) * 1000;
         if (isPlaying && newCursorPosition >= nextClick)
         {
@@ -114,7 +114,7 @@ public class BeatMapper : MonoBehaviour, Observer
     public void doUpdate()
     {
         currentPosition.text =  "" + beatMap.getCursor() / BeatMap.BEAT + "." + ("" + beatMap.getCursor() % 1000).PadRight(3, '0');
-        songPosition = (beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMap.bpm));
+        songPosition = (beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMap.getBPM()));
     }
 
     public void addNote(NoteInput type)

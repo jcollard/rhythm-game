@@ -30,8 +30,8 @@ public class ScratchNoteFactory : NoteFactory
         newNote.name = "Scratch @" + b.position;
         newNote.startPosition = beatMapper.positions.CENTER.position;
 
-        newNote.startTime = ((b.position - BeatMap.BEAT * beatMapper.beatsVisible) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.bpm));
-        newNote.endTime = (b.position * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.bpm));
+        newNote.startTime = ((b.position - BeatMap.BEAT * beatMapper.beatsVisible) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
+        newNote.endTime = (b.position * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
 
         newNote.beatMapper = beatMapper;
 

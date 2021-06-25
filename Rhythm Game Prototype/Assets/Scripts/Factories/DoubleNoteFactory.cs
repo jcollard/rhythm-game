@@ -42,8 +42,8 @@ public class DoubleNoteFactory : NoteFactory
         newNote.endPosition = beatMapper.noteToPosition[n.input];
         newNote.endPosition2 = beatMapper.noteToPosition[n.input2];
 
-        newNote.startTime = ((b.position - BeatMap.BEAT * beatMapper.beatsVisible) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.bpm));
-        newNote.endTime = (b.position * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.bpm));
+        newNote.startTime = ((b.position - BeatMap.BEAT * beatMapper.beatsVisible) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
+        newNote.endTime = (b.position * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
         newNote.beatMapper = beatMapper;
 
         return newNote;

@@ -1,7 +1,12 @@
 ﻿using System;
+
+/// <summary>
+/// A Note represents 
+/// </summary>
 public class Note
 {
 
+    public string type = "Normal";
     public NoteInput input;
 
     public Note(NoteInput input)
