@@ -28,6 +28,10 @@ public class ControlsHelper : MonoBehaviour
     public Button circleButton;
     public Button xButton;
 
+    [Header("Factory Controls")]
+    public Button nextFactory;
+    public Button prevFactory;
+
     [Header("Beat Mapper")]
     public BeatMapper beatMapper;
 
@@ -63,5 +67,7 @@ public class ControlsHelper : MonoBehaviour
         circleButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.Circle));
         xButton.onClick.AddListener(() => beatMapper.addNote(NoteInput.X));
 
+        nextFactory.onClick.AddListener(() => beatMapper.nextFactory());
+        prevFactory.onClick.AddListener(() => beatMapper.prevFactory());
     }
 }

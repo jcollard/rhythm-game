@@ -22,6 +22,13 @@ public class BeatMapper : MonoBehaviour, Observer
 
     public InputField currentPosition;
 
+    [Header("Note Factory")]
+    public Text noteFactoryName;
+    public int factoryIndex = 0;
+    public FactoryHelper noteFactoryHelper;
+    private NoteFactory noteFactory;
+    public GameObject factoryPosition;
+
     // Use this for initialization
     void Start()
     {
@@ -35,6 +42,8 @@ public class BeatMapper : MonoBehaviour, Observer
         noteToPosition.Add(NoteInput.Triangle, positions.TRIANGLE.position);
         noteToPosition.Add(NoteInput.Circle, positions.CIRCLE.position);
         noteToPosition.Add(NoteInput.X, positions.X.position);
+
+        newFactory(noteFactoryHelper.factories[factoryIndex]);
 
     }
 
@@ -119,8 +128,36 @@ public class BeatMapper : MonoBehaviour, Observer
 
     public void addNote(NoteInput type)
     {
-        //TODO: Use NoteFactory
-        Note n = new Note(type);
-        beatMap.addNote(n);
+        NoteFactory nextNoteFactory = noteFactory.addNote(type, beatMap);
+        if(nextNoteFactory != noteFactory)
+        {
+            noteFactory.transform.position = new Vector2(-20, 0);
+            noteFactory = nextNoteFactory;
+            noteFactory.transform.position = factoryPosition.transform.position;
+        }
     }
+
+    public void nextFactory()
+    {
+        factoryIndex = (factoryIndex + 1) % noteFactoryHelper.factories.Length;
+        newFactory(noteFactoryHelper.factories[factoryIndex]);
+    }
+
+    public void prevFactory()
+    {
+        factoryIndex = factoryIndex > 0 ? factoryIndex - 1 : noteFactoryHelper.factories.Length - 1;
+        newFactory(noteFactoryHelper.factories[factoryIndex]);
+    }
+
+    private void newFactory(NoteFactory newFactory)
+    {
+        if (noteFactory != null)
+        {
+            noteFactory.transform.position = new Vector2(-20, 0);
+        }
+        noteFactory = newFactory;
+        noteFactory.transform.position = factoryPosition.transform.position;
+        noteFactoryName.text = noteFactory.displayName;
+    }
+
 }
