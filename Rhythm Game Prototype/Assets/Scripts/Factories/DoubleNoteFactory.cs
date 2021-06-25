@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class DoubleNoteFactory : NoteFactory
 {
@@ -34,7 +35,7 @@ public class DoubleNoteFactory : NoteFactory
         GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(noteController);
         DoubleNoteController newNote = gameObject.GetComponent<DoubleNoteController>();
 
-        newNote.model = n;
+        newNote.model = new Tuple<Note, Beat>(n, b);
         newNote.gameObjectRef = gameObject;
         newNote.transform.parent = beatMapper.notes.transform;
         newNote.name = "" + n.input + " @" + b.position;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +12,7 @@ public class NoteController : MonoBehaviour
     public float startTime;
     public float endTime;
     public BeatMapper beatMapper;
-    public Note model;
+    public Tuple<Note, Beat> model;
 
     void Update()
     {

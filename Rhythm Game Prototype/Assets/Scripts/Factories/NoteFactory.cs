@@ -48,7 +48,7 @@ public class NoteFactory : MonoBehaviour
         GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(noteController);
         NoteController newNote = gameObject.GetComponent<NoteController>();
 
-        newNote.model = n;
+        newNote.model = new Tuple<Note, Beat>(n, b);
         newNote.gameObjectRef = gameObject;
         newNote.transform.parent = beatMapper.notes.transform;
         newNote.name = "" + n.input + " @" + b.position;

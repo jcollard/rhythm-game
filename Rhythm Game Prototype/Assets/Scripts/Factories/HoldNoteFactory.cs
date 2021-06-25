@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class HoldNoteFactory : NoteFactory
 {
@@ -38,10 +39,10 @@ public class HoldNoteFactory : NoteFactory
         GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(noteController);
         HoldNoteController newNote = gameObject.GetComponent<HoldNoteController>();
 
-        newNote.model = n;
+        newNote.model = new Tuple<Note, Beat>(n, b);
         newNote.gameObjectRef = gameObject;
         newNote.transform.parent = beatMapper.notes.transform;
-        newNote.name = "" + n.input + " @" + b.position;
+        newNote.name = "Hold: " + n.input + " @" + b.position;
         newNote.startPosition = beatMapper.positions.CENTER.position;
         newNote.endPosition = beatMapper.noteToPosition[n.input];
 

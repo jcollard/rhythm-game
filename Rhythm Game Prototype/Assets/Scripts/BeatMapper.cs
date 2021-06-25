@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System;
 
 public class BeatMapper : MonoBehaviour, Observer
 {
@@ -19,7 +20,7 @@ public class BeatMapper : MonoBehaviour, Observer
 
     public PositionHelper positions;
 
-    public readonly Dictionary<Note, NoteController> noteControllers = new Dictionary<Note, NoteController>();
+    public readonly Dictionary<Tuple<Note, Beat>, NoteController> noteControllers = new Dictionary<Tuple<Note,Beat>, NoteController>();
     public readonly Dictionary<NoteInput, Vector2> noteToPosition = new Dictionary<NoteInput, Vector2>();
 
     public InputField currentPosition;
@@ -89,25 +90,26 @@ public class BeatMapper : MonoBehaviour, Observer
         {
             foreach(Note n in b.notes)
             {
-                if (noteControllers.ContainsKey(n))
+                Tuple<Note, Beat> tuple = new Tuple<Note, Beat>(n, b);
+                if (noteControllers.ContainsKey(tuple))
                 {
                     continue;
                 }
-                
-                NoteController newNote = NoteFactory.getNoteController(n, b, this);
 
-                noteControllers.Add(n, newNote);
+                //TODO: Key needs to be beat + note
+                NoteController newNote = NoteFactory.getNoteController(n, b, this);
+                noteControllers.Add(new Tuple<Note, Beat>(n, b), newNote);
 
             }
         }
     }
 
-    public void removeNote(Note n, NoteController controller)
+    public void removeNote(Tuple<Note, Beat> tuple, NoteController controller)
     {
-        if (noteControllers.ContainsKey(n))
+        if (noteControllers.ContainsKey(tuple))
         {
             UnityEngine.Object.Destroy(controller.gameObjectRef);
-            noteControllers.Remove(n);
+            noteControllers.Remove(tuple);
         }
     }
 
@@ -164,5 +166,7 @@ public class BeatMapper : MonoBehaviour, Observer
         noteControllers.Clear();
         drawBeats();
     }
+
+    
 
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class ScratchNoteFactory : NoteFactory
 {
@@ -24,7 +25,7 @@ public class ScratchNoteFactory : NoteFactory
         GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(noteController);
         ScratchNoteController newNote = gameObject.GetComponent<ScratchNoteController>();
 
-        newNote.model = n;
+        newNote.model = new Tuple<Note,Beat>(n, b);
         newNote.gameObjectRef = gameObject;
         newNote.transform.parent = beatMapper.notes.transform;
         newNote.name = "Scratch @" + b.position;
