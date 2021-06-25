@@ -28,8 +28,9 @@ public class DoubleNoteFactory : NoteFactory
         return this;
     }
 
-    public override NoteController drawNote(Note n, Beat b, BeatMapper beatMapper)
+    public override NoteController drawNote(Note _n, Beat b, BeatMapper beatMapper)
     {
+        DoubleNote n = (DoubleNote)_n;
         GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(noteController);
         DoubleNoteController newNote = gameObject.GetComponent<DoubleNoteController>();
 
@@ -39,6 +40,7 @@ public class DoubleNoteFactory : NoteFactory
         newNote.name = "" + n.input + " @" + b.position;
         newNote.startPosition = beatMapper.positions.CENTER.position;
         newNote.endPosition = beatMapper.noteToPosition[n.input];
+        newNote.endPosition2 = beatMapper.noteToPosition[n.input2];
 
         newNote.startTime = ((b.position - BeatMap.BEAT * beatMapper.beatsVisible) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.bpm));
         newNote.endTime = (b.position * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.bpm));
