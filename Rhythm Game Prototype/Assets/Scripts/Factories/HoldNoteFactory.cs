@@ -32,8 +32,9 @@ public class HoldNoteFactory : NoteFactory
         return this;
     }
 
-    public override NoteController drawNote(Note n, Beat b, BeatMapper beatMapper)
+    public override NoteController drawNote(Note _n, Beat b, BeatMapper beatMapper)
     {
+        HoldNote n = (HoldNote)_n;
         GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(noteController);
         HoldNoteController newNote = gameObject.GetComponent<HoldNoteController>();
 
@@ -46,6 +47,9 @@ public class HoldNoteFactory : NoteFactory
 
         newNote.startTime = ((b.position - BeatMap.BEAT * beatMapper.beatsVisible) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.bpm));
         newNote.endTime = (b.position * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.bpm));
+
+        newNote.secondStartTime = ((b.position + n.duration - BeatMap.BEAT * beatMapper.beatsVisible) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.bpm));
+        newNote.secondEndTime = ((b.position + n.duration) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.bpm));
         newNote.beatMapper = beatMapper;
 
         return newNote;

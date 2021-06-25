@@ -6,6 +6,8 @@ public class HoldNoteController : NoteController
 
     public GameObject startObject;
     public GameObject endObject;
+    public float secondStartTime;
+    public float secondEndTime;
 
     void Update()
     {
@@ -15,12 +17,12 @@ public class HoldNoteController : NoteController
         }
 
         float percentage = (beatMapper.songPosition - startTime) / (endTime - startTime);
-        float rotation = 360f * percentage;
+        float percentage2 = (beatMapper.songPosition - secondStartTime) / (secondEndTime - secondStartTime);
 
-        transform.rotation = Quaternion.Euler(0, 0, rotation);
-        transform.position = Vector2.LerpUnclamped(startPosition, endPosition, percentage);
+        startObject.transform.position = Vector2.Lerp(startPosition, endPosition, percentage);
+        endObject.transform.position = Vector2.Lerp(startPosition, endPosition, percentage2);
 
-        if (percentage > 1.5 || percentage < 0)
+        if (percentage2 > 1 || percentage < 0)
         {
             beatMapper.removeNote(model, this);
         }
