@@ -4,41 +4,93 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
 
+/// <summary>
+/// A BeatMapper manages the View/Controller for a BeatMap
+/// </summary>
 public class BeatMapper : MonoBehaviour, Observer
 {
+    /// <summary>
+    /// The BeatMap model that is being used
+    /// </summary>
     public BeatMap beatMap = new BeatMap(120);
+
+    /// <summary>
+    /// The number of beats that should be rendered to the screen
+    /// </summary>
     public int beatsVisible = 4;
 
+    /// <summary>
+    /// Determines if the BeatMap's cursor should be updated based on
+    /// Time.deltaTime
+    /// </summary>
     public bool isPlaying = false;
+
+    /// <summary>
+    /// The current position of the track in seconds
+    /// </summary>
     public float songPosition = 0;
 
-    
-    public GameObject normalNote;
-    public GameObject holdNote;
     public GameObject notes;
+    /// <summary>
+    /// The audio file to be used for the metronome sound
+    /// </summary>
     public AudioSource metronome;
 
+    /// <summary>
+    /// A reference to a PositionHelper
+    /// </summary>
     public PositionHelper positions;
 
+    /// <summary>
+    /// A lookup table for noteController's that should currently be displayed
+    /// </summary>
     public readonly Dictionary<Tuple<Note, Beat>, NoteController> noteControllers = new Dictionary<Tuple<Note,Beat>, NoteController>();
+
+    /// <summary>
+    /// A lookup table for where NoteInput's are displayed on the screen
+    /// </summary>
     public readonly Dictionary<NoteInput, Vector2> noteToPosition = new Dictionary<NoteInput, Vector2>();
 
+    /// <summary>
+    /// The InputField for the current position
+    /// </summary>
     public InputField currentPosition;
 
     [Header("Note Factory")]
+
+    /// <summary>
+    /// The text which should be updated based on the currently selected factory
+    /// </summary>
     public Text noteFactoryName;
+
+    /// <summary>
+    /// The index of the currently selected NoteFactory
+    /// </summary>
     public int factoryIndex = 0;
+
+    /// <summary>
+    /// The NoteFactoryHelper
+    /// </summary>
     public FactoryHelper noteFactoryHelper;
+
+    /// <summary>
+    /// The currently selected NoteFactory
+    /// </summary>
     private NoteFactory noteFactory;
+
+    /// <summary>
+    /// A GameObject that is at the position where the currently selected NoteFactory
+    /// should be rendered
+    /// </summary>
     public GameObject factoryPosition;
 
-    // Use this for initialization
     void Start()
     {
-
+        // Register self as an observer on the beatMap and set the cursor to 0
         beatMap.registerObserver(this);
         beatMap.setCursor(0);
 
+        // Register each of the note positions for easy lookup
         noteToPosition.Add(NoteInput.Up, positions.UP.position);
         noteToPosition.Add(NoteInput.Left, positions.LEFT.position);
         noteToPosition.Add(NoteInput.Down, positions.DOWN.position);
@@ -46,24 +98,28 @@ public class BeatMapper : MonoBehaviour, Observer
         noteToPosition.Add(NoteInput.Circle, positions.CIRCLE.position);
         noteToPosition.Add(NoteInput.X, positions.X.position);
 
+        // Select the current factory
         newFactory(noteFactoryHelper.factories[factoryIndex]);
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (isPlaying)
         {
+            // Update the songPosition based on the Time.deltaTime
+            // TODO: When a musical track is selected, this likely will be queried
             songPosition += Time.deltaTime;
 
         }
 
         // Calculate the cursor position
         // (BPM * BEAT DURATION * songPosition in seconds / 60 seconds per minute) = Cursor Position
-
+        // TODO: write a helper method for this calculation
         long newCursorPosition = (long)((beatMap.getBPM() * BeatMap.BEAT * songPosition)/60);
         long nextClick = ((beatMap.getCursor() / 1000) + 1) * 1000;
+
+        // TODO: Add metronome on / off option
         if (isPlaying && newCursorPosition >= nextClick)
         {
             metronome.Play();
@@ -73,30 +129,46 @@ public class BeatMapper : MonoBehaviour, Observer
         drawBeats();
     }
 
+    /// <summary>
+    /// Draws the beats that from 2 BEAT after they should hit to beatsVisible
+    /// BEAT before they should be hit
+    /// </summary>
     public void drawBeats()
     {
         drawBeats(beatMap.getCursor() - 2 * BeatMap.BEAT, beatMap.getCursor() + beatsVisible * BeatMap.BEAT);
     }
 
+    /// <summary>
+    /// Given a startBeat cursor and an endBeat cursor, draw all of the beats
+    /// that fall between those two points.
+    /// </summary>
+    /// <param name="startBeat"></param>
+    /// <param name="endBeat"></param>
     public void drawBeats(long startBeat, long endBeat)
     {
+        // TODO: This currently loops through all of the beats. There is
+        //       probably a simpler way to do this to increase performance
+        //       for BeatMap's that have a large number of Beats
+        //       beats is a sorted list so we could do a binary search
+        //       to find the start / end efficiently then loop
+        //       based on index.
         List<Beat> beats = beatMap.getBeats().FindAll((Beat b) =>
         {
             return b.position >= startBeat && b.position <= endBeat;
         });
-        //print("Position: " + beatMap.getCursor());
-        //print("Upcomming Notes: ");
+
         foreach(Beat b in beats)
         {
             foreach(Note n in b.notes)
             {
                 Tuple<Note, Beat> tuple = new Tuple<Note, Beat>(n, b);
+                // If this Note, Beat combo is already present, we don't need
+                // to add it again
                 if (noteControllers.ContainsKey(tuple))
                 {
                     continue;
                 }
 
-                //TODO: Key needs to be beat + note
                 NoteController newNote = NoteFactory.getNoteController(n, b, this);
                 noteControllers.Add(new Tuple<Note, Beat>(n, b), newNote);
 
@@ -104,21 +176,32 @@ public class BeatMapper : MonoBehaviour, Observer
         }
     }
 
-    public void removeNote(Tuple<Note, Beat> tuple, NoteController controller)
+    /// <summary>
+    /// Given a Note, Beat tuple, removes the associated NoteController from the scene
+    /// </summary>
+    /// <param name="tuple">The Note, Beat tuple to remove</param>
+    public void removeNote(Tuple<Note, Beat> tuple)
     {
         if (noteControllers.ContainsKey(tuple))
         {
-            UnityEngine.Object.Destroy(controller.gameObjectRef);
+            UnityEngine.Object.Destroy(noteControllers[tuple].gameObjectRef);
             noteControllers.Remove(tuple);
         }
     }
 
+    /// <summary>
+    /// Called by the BeatMap when a change is made. This is used to update the position text.
+    /// </summary>
     public void doUpdate()
     {
         currentPosition.text =  "" + beatMap.getCursor() / BeatMap.BEAT + "." + ("" + beatMap.getCursor() % 1000).PadRight(3, '0');
         songPosition = (beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMap.getBPM()));
     }
 
+    /// <summary>
+    /// Adds a note based on the specified NoteInput using the current noteFactory
+    /// </summary>
+    /// <param name="type">The NoteInput that was selected by the user</param>
     public void addNote(NoteInput type)
     {
         
@@ -132,18 +215,30 @@ public class BeatMapper : MonoBehaviour, Observer
         }
     }
 
+    /// <summary>
+    /// Goes to the nextFactory in the factories array (loops around)
+    /// </summary>
     public void nextFactory()
     {
         factoryIndex = (factoryIndex + 1) % noteFactoryHelper.factories.Length;
         newFactory(noteFactoryHelper.factories[factoryIndex]);
     }
 
+    /// <summary>
+    /// Goes to the prevFactory in the factories array (loops around)
+    /// </summary>
     public void prevFactory()
     {
         factoryIndex = factoryIndex > 0 ? factoryIndex - 1 : noteFactoryHelper.factories.Length - 1;
         newFactory(noteFactoryHelper.factories[factoryIndex]);
     }
 
+    /// <summary>
+    /// Helper method that is used to set the factory. This moves the factory to be
+    /// displayed on the screen and calls the factories initialize method to clear out any
+    /// previous information.
+    /// </summary>
+    /// <param name="newFactory">The factory to be used</param>
     private void newFactory(NoteFactory newFactory)
     {
         if (noteFactory != null)
@@ -156,6 +251,10 @@ public class BeatMapper : MonoBehaviour, Observer
         noteFactory.initialize();
     }
 
+    /// <summary>
+    /// Sets the BPM of the underlying BeatMap model and redraws the screen.
+    /// </summary>
+    /// <param name="bpm">The new BPM</param>
     public void setBPM(int bpm)
     {
         beatMap.setBPM(bpm);

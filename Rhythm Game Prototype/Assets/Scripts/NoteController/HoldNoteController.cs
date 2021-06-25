@@ -1,6 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
+/// <summary>
+/// A HoldNoteController is a View for a HoldNote, Beat model.
+/// </summary>
 public class HoldNoteController : NoteController
 {
 
@@ -24,7 +27,7 @@ public class HoldNoteController : NoteController
 
         if (percentage2 > 1 || percentage < 0)
         {
-            beatMapper.removeNote(model, this);
+            beatMapper.removeNote(model);
         }
     }
 }

@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A ScratchNoteController is a View for a ScratchNote, Beat model.
+/// </summary>
 public class ScratchNoteController : NoteController
 {
     public Vector2 startScale = new Vector2(0.25f, 0.25f);
@@ -23,7 +26,7 @@ public class ScratchNoteController : NoteController
 
         if (percentage > 1.5 || percentage < 0)
         {
-            beatMapper.removeNote(model, this);
+            beatMapper.removeNote(model);
         }
     }
 

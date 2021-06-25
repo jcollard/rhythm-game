@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// A Helper class for keeping track of positions on the screen
+/// </summary>
 public class PositionHelper : MonoBehaviour
 {
     public Transform CENTER;

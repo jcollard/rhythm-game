@@ -3,9 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A NoteController is the displayed portion of a Note, Beat combination.
+/// <br/>
+/// This class keeps track of Normal Notes.
+/// </summary>
 public class NoteController : MonoBehaviour
 {
-
+    //TODO: calculate startTime / endTime based on model?
     public GameObject gameObjectRef;
     public Vector2 startPosition;
     public Vector2 endPosition;
@@ -29,7 +34,7 @@ public class NoteController : MonoBehaviour
 
         if (percentage > 1.5 || percentage < 0)
         {
-            beatMapper.removeNote(model, this);
+            beatMapper.removeNote(model);
         }
     }
 

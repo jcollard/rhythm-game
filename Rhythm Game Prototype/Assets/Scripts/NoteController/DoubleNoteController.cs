@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A DoubleNoteController is a View for a Double, Beat model.
+/// </summary>
 public class DoubleNoteController : NoteController
 {
     public GameObject note0;
@@ -23,7 +26,7 @@ public class DoubleNoteController : NoteController
 
         if (percentage > 1.5 || percentage < 0)
         {
-            beatMapper.removeNote(model, this);
+            beatMapper.removeNote(model);
         }
     }
 }

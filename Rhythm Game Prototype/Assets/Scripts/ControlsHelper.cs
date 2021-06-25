@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// A Helper Class for specifying how UI controls work.
+/// </summary>
 public class ControlsHelper : MonoBehaviour
 {
     [Header("Position Buttons")]
