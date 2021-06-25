@@ -268,7 +268,6 @@ public class BeatMap
     /// <returns>The Beat containing the note that was added</returns>
     public Beat addNote(Note toAdd, long cursor)
     {
-        //TODO: Don't add duplicate notes
         Beat beat = null;
         if (beats.ContainsKey(cursor))
         {
