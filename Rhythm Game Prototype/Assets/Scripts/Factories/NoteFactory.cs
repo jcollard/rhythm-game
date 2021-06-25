@@ -9,6 +9,7 @@ public class NoteFactory : MonoBehaviour
 
     public static NoteFactory noteFactory;
     public static HoldNoteFactory holdNoteFactory;
+    public static DoubleNoteFactory doubleNoteFactory;
 
     private void Start()
     {
@@ -20,6 +21,11 @@ public class NoteFactory : MonoBehaviour
         if (n is HoldNote)
         {
             return holdNoteFactory.drawNote(n, b, beatMapper);
+        }
+
+        if (n is DoubleNote)
+        {
+            return doubleNoteFactory.drawNote(n, b, beatMapper);
         }
         return noteFactory.drawNote(n,b,beatMapper);
     }
