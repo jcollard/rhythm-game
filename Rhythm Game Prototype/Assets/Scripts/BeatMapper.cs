@@ -135,15 +135,12 @@ public class BeatMapper : MonoBehaviour, Observer
         // Calculate the cursor position
         // (BPM * BEAT DURATION * songPosition in seconds / 60 seconds per minute) = Cursor Position
         // TODO: write a helper method for this calculation
-        long newCursorPosition = (long)((beatMap.getBPM() * BeatMap.BEAT * songPosition) / 60);
+        long newCursorPosition = beatMap.SecondsToCursorPosition(songPosition);
 
-        if (newCursorPosition % 2 == 1)
-        {
-            newCursorPosition += 1;
-        }
+        
         long nextClick = ((beatMap.getCursor() / 1000) + 1) * 1000;
 
-        // TODO: Add metronome on / off option
+        
         if (isMetronomeOn && isPlaying && newCursorPosition >= nextClick)
         {
             metronome.Play();
@@ -211,7 +208,7 @@ public class BeatMapper : MonoBehaviour, Observer
     {
         if (noteControllers.ContainsKey(tuple))
         {
-            UnityEngine.Object.Destroy(noteControllers[tuple].gameObjectRef);
+            UnityEngine.Object.Destroy(noteControllers[tuple].gameObject);
             noteControllers.Remove(tuple);
         }
     }
@@ -251,7 +248,7 @@ public class BeatMapper : MonoBehaviour, Observer
     public void doUpdate()
     {
         SetCursorText();
-        songPosition = (beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMap.getBPM()));
+        songPosition = beatMap.CursorPositionToSeconds(beatMap.getCursor());
         bpmField.text = "" + beatMap.getBPM();
         trackSource.time = songPosition;
     }
@@ -318,7 +315,7 @@ public class BeatMapper : MonoBehaviour, Observer
         beatMap.setBPM(bpm);
         foreach (NoteController n in noteControllers.Values)
         {
-            UnityEngine.Object.Destroy(n.gameObjectRef);
+            UnityEngine.Object.Destroy(n.gameObject);
         }
         noteControllers.Clear();
         drawBeats();

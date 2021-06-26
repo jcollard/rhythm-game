@@ -65,15 +65,11 @@ public class DoubleNoteFactory : NoteFactory
         DoubleNoteController newNote = gameObject.GetComponent<DoubleNoteController>();
 
         newNote.model = new Tuple<Note, Beat>(n, b);
-        newNote.gameObjectRef = gameObject;
         newNote.transform.parent = beatMapper.notes.transform;
-        newNote.name = "" + n.input + " @" + b.position;
+        newNote.name = "DoubleNote " + n.input + ", " + n.input2 + " @" + b.position;
         newNote.startPosition = beatMapper.positions.CENTER.position;
         newNote.endPosition = beatMapper.noteToPosition[n.input];
         newNote.endPosition2 = beatMapper.noteToPosition[n.input2];
-
-        newNote.startTime = ((b.position - BeatMap.BEAT * beatMapper.beatsVisible) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
-        newNote.endTime = (b.position * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
         newNote.beatMapper = beatMapper;
 
         return newNote;

@@ -70,17 +70,11 @@ public class HoldNoteFactory : NoteFactory
         HoldNoteController newNote = gameObject.GetComponent<HoldNoteController>();
 
         newNote.model = new Tuple<Note, Beat>(n, b);
-        newNote.gameObjectRef = gameObject;
         newNote.transform.parent = beatMapper.notes.transform;
         newNote.name = "Hold: " + n.input + " @" + b.position;
         newNote.startPosition = beatMapper.positions.CENTER.position;
         newNote.endPosition = beatMapper.noteToPosition[n.input];
 
-        newNote.startTime = ((b.position - BeatMap.BEAT * beatMapper.beatsVisible) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
-        newNote.endTime = (b.position * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
-
-        newNote.secondStartTime = ((b.position + n.duration - BeatMap.BEAT * beatMapper.beatsVisible) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
-        newNote.secondEndTime = ((b.position + n.duration) * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
         newNote.beatMapper = beatMapper;
 
         return newNote;

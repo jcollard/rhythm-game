@@ -83,9 +83,9 @@ public class DoubleNote : Note
 [Serializable]
 public class HoldNote : Note
 {
-    public readonly float duration;
+    public readonly long duration;
 
-    public HoldNote(NoteInput input, float duration) : base(input)
+    public HoldNote(NoteInput input, long duration) : base(input)
     {
         this.duration = duration;
         this.type = "Hold";

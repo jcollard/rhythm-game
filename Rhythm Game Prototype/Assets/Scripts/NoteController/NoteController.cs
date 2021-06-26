@@ -11,13 +11,35 @@ using UnityEngine;
 public class NoteController : MonoBehaviour
 {
     //TODO: calculate startTime / endTime based on model?
-    public GameObject gameObjectRef;
     public Vector2 startPosition;
     public Vector2 endPosition;
-    public float startTime;
-    public float endTime;
+    protected float startTime;
+    protected float endTime;
+    private int bpm = -1;
     public BeatMapper beatMapper;
     public Tuple<Note, Beat> model;
+
+    public void Start()
+    {
+        CalculateStartAndEndTime();
+    }
+
+    public void CalculateStartAndEndTime()
+    {
+        if (beatMapper == null || bpm == beatMapper.beatMap.getBPM())
+        {
+            return;
+        }
+        DoCalculateStartAndEndTime();
+        bpm = beatMapper.beatMap.getBPM();
+    }
+
+    protected virtual void DoCalculateStartAndEndTime()
+    {
+        Beat b = model.Item2;
+        startTime = beatMapper.beatMap.CursorPositionToSeconds(b.position - BeatMap.BEAT * beatMapper.beatsVisible);
+        endTime = beatMapper.beatMap.CursorPositionToSeconds(b.position);
+    }
 
     void Update()
     {

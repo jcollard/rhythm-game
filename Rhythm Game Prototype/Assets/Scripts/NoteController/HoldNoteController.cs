@@ -9,8 +9,17 @@ public class HoldNoteController : NoteController
 
     public GameObject startObject;
     public GameObject endObject;
-    public float secondStartTime;
-    public float secondEndTime;
+    private float secondStartTime;
+    private float secondEndTime;
+
+    protected override void DoCalculateStartAndEndTime()
+    {
+        base.DoCalculateStartAndEndTime();
+        HoldNote n = (HoldNote)model.Item1;
+        Beat b = model.Item2;
+        secondStartTime = beatMapper.beatMap.CursorPositionToSeconds(b.position + n.duration - BeatMap.BEAT * beatMapper.beatsVisible);
+        secondEndTime = beatMapper.beatMap.CursorPositionToSeconds(b.position + n.duration);
+    }
 
     void Update()
     {

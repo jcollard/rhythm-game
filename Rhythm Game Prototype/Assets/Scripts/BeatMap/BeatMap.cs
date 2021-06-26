@@ -377,6 +377,32 @@ public class BeatMap
         this.observers.Add(o);
     }
 
+    /// <summary>
+    /// Given a number of seconds, convert to the nearest cursor position
+    /// </summary>
+    /// <param name="seconds">The number of seconds</param>
+    /// <returns>The nearest cursor position</returns>
+    public long SecondsToCursorPosition(float seconds)
+    {
+        long position = (long)((bpm * BeatMap.BEAT * seconds) / 60);
+        // Handle floating point rounding error
+        if (position % 2 == 1)
+        {
+            position += 1;
+        }
+        return position;
+    }
+
+    /// <summary>
+    /// Given a cursor position, convert it to seconds
+    /// </summary>
+    /// <param name="position">The cursor position</param>
+    /// <returns>The time in seconds</returns>
+    public float CursorPositionToSeconds(long position)
+    {
+        return (position * 60) / ((float)(BeatMap.BEAT * bpm)); ;
+    }
+
     public void Serialize(String path)
     {
         Stream s = File.Open(path, FileMode.Create);
@@ -391,6 +417,7 @@ public class BeatMap
         BinaryFormatter b = new BinaryFormatter();
         BeatMap beatMap = (BeatMap)b.Deserialize(s);
         beatMap.observers = new HashSet<Observer>();
+        beatMap.setCursor(0);
         s.Close();
         return beatMap;
     }
