@@ -85,7 +85,7 @@ public class BeatMap
     /// If the cursor was updated, all observers are notified.
     /// </summary>
     /// <param name="cursor">The new position of the cursor</param>
-    public void setCursor(long cursor)
+    public void setCursor(long cursor, bool doNotify = false)
     {
         if (this.cursor == cursor)
         {
@@ -100,7 +100,10 @@ public class BeatMap
         {
             this.cursor = cursor;
         }
-        notify();
+        if (doNotify)
+        {
+            notify();
+        }
     }
 
     /// <summary>
@@ -387,6 +390,7 @@ public class BeatMap
         Stream s = File.Open(path, FileMode.Open);
         BinaryFormatter b = new BinaryFormatter();
         BeatMap beatMap = (BeatMap)b.Deserialize(s);
+        beatMap.observers = new HashSet<Observer>();
         s.Close();
         return beatMap;
     }

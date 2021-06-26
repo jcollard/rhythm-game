@@ -61,7 +61,7 @@ public class ControlsHelper : MonoBehaviour
         currentPosition.onEndEdit.AddListener((String newCursor) =>
         {
             float nC = float.Parse(newCursor);
-            beatMapper.beatMap.setCursor((long)(nC * BeatMap.BEAT));
+            beatMapper.beatMap.setCursor((long)(nC * BeatMap.BEAT), true);
         });
 
         bpm.onEndEdit.AddListener((String newBPM) =>
@@ -70,12 +70,12 @@ public class ControlsHelper : MonoBehaviour
             beatMapper.setBPM(bpm);
         });
 
-        playButton.onClick.AddListener(() => beatMapper.isPlaying = true);
-        pauseButton.onClick.AddListener(() => beatMapper.isPlaying = false);
+        playButton.onClick.AddListener(() => beatMapper.Play());
+        pauseButton.onClick.AddListener(() => beatMapper.Stop());
         stopButton.onClick.AddListener(() =>
         {
-            beatMapper.isPlaying = false;
-            beatMapper.beatMap.setCursor(0);
+            beatMapper.Stop();
+            beatMapper.beatMap.setCursor(0, true);
         });
 
 
@@ -101,8 +101,11 @@ public class ControlsHelper : MonoBehaviour
             try
             {
                 beatMapper.beatMap = BeatMap.Deserialize(file);
+                beatMapper.beatMap.registerObserver(beatMapper);
                 beatMapper.drawBeats();
-            } catch
+                beatMapper.doUpdate();
+            }
+            catch
             {
                 EditorUtility.DisplayDialog("Unable to Open File", "Could not Open File", "Continue");
             }
@@ -117,13 +120,14 @@ public class ControlsHelper : MonoBehaviour
                 return;
             }
 
-            try {
-            
+            try
+            {
+
                 String[] path = file.Split(Path.DirectorySeparatorChar);
                 beatMapper.beatMap.name = path[path.Length - 1];
                 beatMapper.beatMap.Serialize(file);
                 EditorUtility.DisplayDialog("File Saved", "File Saved", "Continue");
-               
+
             }
             catch
             {
@@ -143,6 +147,7 @@ public class ControlsHelper : MonoBehaviour
             try
             {
                 Coroutine cr = StartCoroutine(GetAudioClip(file));
+                beatMapper.isMetronomeOn = false;
 
             }
             catch
@@ -171,7 +176,8 @@ public class ControlsHelper : MonoBehaviour
                     trackSource.time = (beatMapper.beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
 
 
-                } catch
+                }
+                catch
                 {
                     EditorUtility.DisplayDialog("Could not load track", "An error occured while loading the track.", "Continue");
                 }

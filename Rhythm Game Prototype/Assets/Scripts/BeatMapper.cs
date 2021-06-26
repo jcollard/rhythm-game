@@ -35,6 +35,8 @@ public class BeatMapper : MonoBehaviour, Observer
     /// The audio file to be used for the metronome sound
     /// </summary>
     public AudioSource metronome;
+    public bool isMetronomeOn = true;
+    public InputField bpmField;
 
     /// <summary>
     /// A reference to a PositionHelper
@@ -114,7 +116,19 @@ public class BeatMapper : MonoBehaviour, Observer
         {
             // Update the songPosition based on the Time.deltaTime
             // TODO: When a musical track is selected, this likely will be queried
-            songPosition += Time.deltaTime;
+            if (trackSource.clip == null)
+            {
+                songPosition += Time.deltaTime;
+            }
+            else
+            {
+                songPosition = trackSource.time;
+            }
+
+            if (trackSource.clip != null && !trackSource.isPlaying)
+            {
+                isPlaying = false;
+            }
 
         }
 
@@ -122,6 +136,7 @@ public class BeatMapper : MonoBehaviour, Observer
         // (BPM * BEAT DURATION * songPosition in seconds / 60 seconds per minute) = Cursor Position
         // TODO: write a helper method for this calculation
         long newCursorPosition = (long)((beatMap.getBPM() * BeatMap.BEAT * songPosition) / 60);
+
         if (newCursorPosition % 2 == 1)
         {
             newCursorPosition += 1;
@@ -129,12 +144,15 @@ public class BeatMapper : MonoBehaviour, Observer
         long nextClick = ((beatMap.getCursor() / 1000) + 1) * 1000;
 
         // TODO: Add metronome on / off option
-        if (isPlaying && newCursorPosition >= nextClick)
+        if (isMetronomeOn && isPlaying && newCursorPosition >= nextClick)
         {
             metronome.Play();
         }
-
-        beatMap.setCursor(newCursorPosition);
+        if (newCursorPosition != beatMap.getCursor())
+        {
+            beatMap.setCursor(newCursorPosition);
+            SetCursorText();
+        }
         drawBeats();
     }
 
@@ -232,8 +250,16 @@ public class BeatMapper : MonoBehaviour, Observer
     /// </summary>
     public void doUpdate()
     {
-        currentPosition.text = "" + beatMap.getCursor() / BeatMap.BEAT + "." + ("" + beatMap.getCursor() % 1000).PadRight(3, '0');
+        SetCursorText();
         songPosition = (beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMap.getBPM()));
+        bpmField.text = "" + beatMap.getBPM();
+        trackSource.time = songPosition;
+    }
+
+    private void SetCursorText()
+    {
+        currentPosition.text = "" + beatMap.getCursor() / BeatMap.BEAT + "." + ("" + beatMap.getCursor() % 1000).PadRight(3, '0');
+
     }
 
     /// <summary>
@@ -298,6 +324,24 @@ public class BeatMapper : MonoBehaviour, Observer
         drawBeats();
     }
 
+    public void Play()
+    {
+        if (trackSource.clip != null)
+        {
+            trackSource.Play();
+            trackSource.time = songPosition;
+            
+        }
+        isPlaying = true;
+    }
 
+    public void Stop()
+    {
+        if (trackSource.clip != null)
+        {
+            trackSource.Stop();
+        }
+        isPlaying = false;
+    }
 
 }

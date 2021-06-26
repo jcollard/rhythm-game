@@ -5011,12 +5011,15 @@ MonoBehaviour:
   songPosition: 0
   notes: {fileID: 1265891486}
   metronome: {fileID: 1097901853}
+  isMetronomeOn: 1
+  bpmField: {fileID: 1843365807}
   positions: {fileID: 327403129}
   currentPosition: {fileID: 1667834386}
   noteFactoryName: {fileID: 1308898076}
   factoryIndex: 0
   noteFactoryHelper: {fileID: 1511107017}
   factoryPosition: {fileID: 1901134364}
+  trackSource: {fileID: 913460932}
 --- !u!4 &1346490299
 Transform:
   m_ObjectHideFlags: 0
