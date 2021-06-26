@@ -168,7 +168,9 @@ public class ControlsHelper : MonoBehaviour
                 try
                 {
                     trackSource.clip = DownloadHandlerAudioClip.GetContent(www);
-                    trackSource.Play();
+                    trackSource.time = (beatMapper.beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
+
+
                 } catch
                 {
                     EditorUtility.DisplayDialog("Could not load track", "An error occured while loading the track.", "Continue");

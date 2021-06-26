@@ -84,6 +84,11 @@ public class BeatMapper : MonoBehaviour, Observer
     /// </summary>
     public GameObject factoryPosition;
 
+    /// <summary>
+    /// The AudioSource of the track
+    /// </summary>
+    public AudioSource trackSource;
+
     void Start()
     {
         // Register self as an observer on the beatMap and set the cursor to 0
@@ -117,6 +122,10 @@ public class BeatMapper : MonoBehaviour, Observer
         // (BPM * BEAT DURATION * songPosition in seconds / 60 seconds per minute) = Cursor Position
         // TODO: write a helper method for this calculation
         long newCursorPosition = (long)((beatMap.getBPM() * BeatMap.BEAT * songPosition) / 60);
+        if (newCursorPosition % 2 == 1)
+        {
+            newCursorPosition += 1;
+        }
         long nextClick = ((beatMap.getCursor() / 1000) + 1) * 1000;
 
         // TODO: Add metronome on / off option
