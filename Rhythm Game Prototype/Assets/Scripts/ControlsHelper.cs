@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
 using System.IO;
+using UnityEngine.Networking;
 
 /// <summary>
 /// A Helper Class for specifying how UI controls work.
@@ -24,6 +25,8 @@ public class ControlsHelper : MonoBehaviour
     public Button playButton;
     public Button stopButton;
     public Button pauseButton;
+    public Button setTrackButton;
+    public AudioSource trackSource;
 
     [Header("Add Controls")]
     public Button upButton;
@@ -128,5 +131,49 @@ public class ControlsHelper : MonoBehaviour
             }
 
         });
+
+        setTrackButton.onClick.AddListener(() =>
+        {
+            String file = EditorUtility.OpenFilePanel("Open File", "", "");
+            if (file == "")
+            {
+                return;
+            }
+
+            try
+            {
+                Coroutine cr = StartCoroutine(GetAudioClip(file));
+
+            }
+            catch
+            {
+                EditorUtility.DisplayDialog("Unable to Load File", "Could not Load Audio File", "Continue");
+            }
+        });
+    }
+
+    IEnumerator GetAudioClip(String filePath)
+    {
+        String file = "file://" + filePath;
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(file, AudioType.MPEG))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result == UnityWebRequest.Result.ConnectionError)
+            {
+                EditorUtility.DisplayDialog("Could not load track", www.error, "Continue");
+            }
+            else
+            {
+                try
+                {
+                    trackSource.clip = DownloadHandlerAudioClip.GetContent(www);
+                    trackSource.Play();
+                } catch
+                {
+                    EditorUtility.DisplayDialog("Could not load track", "An error occured while loading the track.", "Continue");
+                }
+            }
+        }
     }
 }
