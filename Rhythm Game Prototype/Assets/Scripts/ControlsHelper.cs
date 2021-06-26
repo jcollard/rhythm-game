@@ -104,6 +104,7 @@ public class ControlsHelper : MonoBehaviour
                 beatMapper.beatMap.registerObserver(beatMapper);
                 beatMapper.drawBeats();
                 beatMapper.doUpdate();
+                beatMapper.setBPM(beatMapper.beatMap.getBPM());
             }
             catch
             {
