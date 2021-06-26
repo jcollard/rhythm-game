@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 /// <summary>
 /// A BeatMap can be thought of as a sparsely populated array of Beats at given
@@ -12,6 +14,7 @@ using System.Collections.Generic;
 /// A list of all of the Beats for this BeatMap can be obtained using the BeatMap.getBeats()
 /// method which returns a sorted list.
 /// </summary>
+[Serializable]
 public class BeatMap
 {
     /// <summary>
@@ -28,6 +31,11 @@ public class BeatMap
     /// The resolution of a quarter beat (1/4 as long as a BEAT)
     /// </summary>
     public static readonly long QUARTER = BEAT / 4;
+
+    /// <summary>
+    /// The name of this BeatMap track
+    /// </summary>
+    public String name = "Untitled";
 
     /// <summary>
     /// The beats per minute of the BeatMap
@@ -48,6 +56,7 @@ public class BeatMap
     /// <summary>
     /// A set of observers to notify when the BeatMap is modified
     /// </summary>
+    [NonSerialized]
     private HashSet<Observer> observers = new HashSet<Observer>();
 
     /// <summary>
@@ -365,12 +374,30 @@ public class BeatMap
         this.observers.Add(o);
     }
 
+    public void Serialize(String path)
+    {
+        Stream s = File.Open(path, FileMode.Create);
+        BinaryFormatter b = new BinaryFormatter();
+        b.Serialize(s, this);
+        s.Close();
+    }
+
+    public static BeatMap Deserialize(String path)
+    {
+        Stream s = File.Open(path, FileMode.Open);
+        BinaryFormatter b = new BinaryFormatter();
+        BeatMap beatMap = (BeatMap)b.Deserialize(s);
+        s.Close();
+        return beatMap;
+    }
+
 }
 
 /// <summary>
 /// A Beat contains a position and a set of Notes.
 /// A Beat can be sorted by its position
 /// </summary>
+[Serializable]
 public class Beat : IComparable<Beat>
 {
     /// <summary>

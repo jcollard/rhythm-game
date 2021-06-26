@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
+using System.IO;
 
 /// <summary>
 /// A Helper Class for specifying how UI controls work.
@@ -34,6 +36,10 @@ public class ControlsHelper : MonoBehaviour
     [Header("Factory Controls")]
     public Button nextFactory;
     public Button prevFactory;
+
+    [Header("Save/Load")]
+    public Button saveButton;
+    public Button loadButton;
 
     [Header("Beat Mapper")]
     public BeatMapper beatMapper;
@@ -79,5 +85,48 @@ public class ControlsHelper : MonoBehaviour
 
         nextFactory.onClick.AddListener(() => beatMapper.nextFactory());
         prevFactory.onClick.AddListener(() => beatMapper.prevFactory());
+
+        loadButton.onClick.AddListener(() =>
+        {
+            String file = EditorUtility.OpenFilePanel("Open File", "", "");
+
+            if (file == "")
+            {
+                return;
+            }
+
+            try
+            {
+                beatMapper.beatMap = BeatMap.Deserialize(file);
+                beatMapper.drawBeats();
+            } catch
+            {
+                EditorUtility.DisplayDialog("Unable to Open File", "Could not Open File", "Continue");
+            }
+            //beatMapper.beatMap.Serialize("test.file");
+        });
+
+        saveButton.onClick.AddListener(() =>
+        {
+            String file = EditorUtility.SaveFilePanel("Save File", "", beatMapper.beatMap.name, "beatMap");
+            if (file == "")
+            {
+                return;
+            }
+
+            try {
+            
+                String[] path = file.Split(Path.DirectorySeparatorChar);
+                beatMapper.beatMap.name = path[path.Length - 1];
+                beatMapper.beatMap.Serialize(file);
+                EditorUtility.DisplayDialog("File Saved", "File Saved", "Continue");
+               
+            }
+            catch
+            {
+                EditorUtility.DisplayDialog("Unable to Save File", "Could not Open File", "Continue");
+            }
+
+        });
     }
 }
