@@ -60,6 +60,11 @@ public class BeatMap
     private HashSet<Observer> observers = new HashSet<Observer>();
 
     /// <summary>
+    /// The path to the Track to be played with this BeatMap.
+    /// </summary>
+    public String pathToTrack;
+
+    /// <summary>
     /// Notifies all of the observers that a change has been made.
     /// </summary>
     public void notify()

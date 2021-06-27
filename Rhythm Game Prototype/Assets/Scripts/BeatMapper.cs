@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
+using UnityEngine.Networking;
+using UnityEditor;
 
 /// <summary>
 /// A BeatMapper manages the View/Controller for a BeatMap
@@ -341,4 +343,48 @@ public class BeatMapper : MonoBehaviour, Observer
         isPlaying = false;
     }
 
+    public void LoadTrack(String pathToTrack)
+    {
+        try
+        {
+            Coroutine cr = StartCoroutine(GetAudioClip(pathToTrack));
+            isMetronomeOn = false;
+        }
+        catch
+        {
+            EditorUtility.DisplayDialog("Unable to Load File", "Could not Load Audio File", "Continue");
+        }
+    }
+
+    IEnumerator GetAudioClip(String filePath)
+    {
+        String file = "file://" + filePath;
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(file, AudioType.MPEG))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result == UnityWebRequest.Result.ConnectionError)
+            {
+                EditorUtility.DisplayDialog("Could not load track", www.error, "Continue");
+            }
+            else
+            {
+                try
+                {
+                    trackSource.clip = DownloadHandlerAudioClip.GetContent(www);
+                    trackSource.time = (beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMap.getBPM()));
+                    beatMap.pathToTrack = filePath;
+                }
+                catch
+                {
+                    EditorUtility.DisplayDialog("Could not load track", "Could not load " + filePath, "Continue");
+                    beatMap.pathToTrack = null;
+                }
+            }
+        }
+    }
+
+
 }
+
+

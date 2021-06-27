@@ -101,10 +101,15 @@ public class ControlsHelper : MonoBehaviour
             try
             {
                 beatMapper.beatMap = BeatMap.Deserialize(file);
+                if(beatMapper.beatMap.pathToTrack != null)
+                {
+                    beatMapper.LoadTrack(beatMapper.beatMap.pathToTrack);
+                }
                 beatMapper.beatMap.registerObserver(beatMapper);
                 beatMapper.drawBeats();
                 beatMapper.doUpdate();
                 beatMapper.setBPM(beatMapper.beatMap.getBPM());
+                EditorUtility.DisplayDialog("Load Complete", "File Loaded", "Continue");
             }
             catch
             {
@@ -139,50 +144,16 @@ public class ControlsHelper : MonoBehaviour
 
         setTrackButton.onClick.AddListener(() =>
         {
-            String file = EditorUtility.OpenFilePanel("Open File", "", "");
+            string file = EditorUtility.OpenFilePanel("Open File", "", "mp3");
             if (file == "")
             {
                 return;
             }
 
-            try
-            {
-                Coroutine cr = StartCoroutine(GetAudioClip(file));
-                beatMapper.isMetronomeOn = false;
+            beatMapper.LoadTrack(file);
 
-            }
-            catch
-            {
-                EditorUtility.DisplayDialog("Unable to Load File", "Could not Load Audio File", "Continue");
-            }
         });
     }
 
-    IEnumerator GetAudioClip(String filePath)
-    {
-        String file = "file://" + filePath;
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(file, AudioType.MPEG))
-        {
-            yield return www.SendWebRequest();
-
-            if (www.result == UnityWebRequest.Result.ConnectionError)
-            {
-                EditorUtility.DisplayDialog("Could not load track", www.error, "Continue");
-            }
-            else
-            {
-                try
-                {
-                    trackSource.clip = DownloadHandlerAudioClip.GetContent(www);
-                    trackSource.time = (beatMapper.beatMap.getCursor() * 60) / ((float)(BeatMap.BEAT * beatMapper.beatMap.getBPM()));
-
-
-                }
-                catch
-                {
-                    EditorUtility.DisplayDialog("Could not load track", "An error occured while loading the track.", "Continue");
-                }
-            }
-        }
-    }
+    
 }
