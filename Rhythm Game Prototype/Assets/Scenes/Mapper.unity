@@ -291,7 +291,7 @@ MonoBehaviour:
   startPosition: {x: 0, y: 0}
   endPosition: {x: 0, y: 0}
   beatMapper: {fileID: 0}
-  isHit: 0
+  isHit: 4
   note0: {fileID: 1291796103}
   note1: {fileID: 1518603277}
   endPosition2: {x: 0, y: 0}
@@ -2068,7 +2068,7 @@ MonoBehaviour:
   startPosition: {x: 0, y: 0}
   endPosition: {x: 0, y: 0}
   beatMapper: {fileID: 0}
-  isHit: 0
+  isHit: 4
   startObject: {fileID: 1159412914}
   endObject: {fileID: 773258338}
 --- !u!4 &586076000
@@ -7751,7 +7751,7 @@ MonoBehaviour:
   startPosition: {x: 0, y: 0}
   endPosition: {x: 0, y: 0}
   beatMapper: {fileID: 0}
-  isHit: 0
+  isHit: 4
   startScale: {x: 0.25, y: 0.25}
   endScale: {x: 3.25, y: 3.25}
 --- !u!1 &2018517190

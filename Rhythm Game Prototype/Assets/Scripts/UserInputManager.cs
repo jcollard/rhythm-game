@@ -33,45 +33,12 @@ public class UserInputManager : MonoBehaviour
 
         if (beatMapper.isPlaying)
         {
-            foreach(Tuple<Note, Beat> toCheck in beatMapper.noteControllers.Keys){
-                if(beatMapper.noteControllers[toCheck].isHit != HitType.Null)
+            foreach(NoteController toCheck in beatMapper.noteControllers.Values){
+                if(toCheck.isHit != HitType.Null)
                 {
                     continue;
                 }
-                Note n = toCheck.Item1;
-                Beat b = toCheck.Item2;
-                long currPosition = beatMapper.beatMap.getCursor();
-                int withinTolerance = 249;
-                bool checkMiss = currPosition > b.position;
-                long diff = Math.Abs(currPosition - b.position);
-                if (diff < withinTolerance)
-                {
-                    
-                    if (inputs.ContainsKey(n.input))
-                    {
-                        long pressedAt = inputs[n.input];
-                        float accuracy = (withinTolerance - Math.Abs(b.position - pressedAt))/(float)withinTolerance;
-                        if (accuracy > 0)
-                        {
-                            HitType hit = HitType.Null;
-                            if(accuracy > 0.75)
-                            {
-                                hit = HitType.Perfect;
-                            } else if (accuracy > 0.50)
-                            {
-                                hit = HitType.Great;
-                            } else
-                            {
-                                hit = HitType.Good;
-                            }
-                            beatMapper.noteControllers[toCheck].isHit = hit;
-                        }
-                    }
-                }
-                if (checkMiss && diff > withinTolerance) {
-                    beatMapper.noteControllers[toCheck].isHit = HitType.Miss;
-                }
-
+                toCheck.CheckHit(inputs);
             }
         }
 

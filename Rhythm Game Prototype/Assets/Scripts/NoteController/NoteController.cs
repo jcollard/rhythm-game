@@ -46,14 +46,71 @@ public class NoteController : MonoBehaviour
 
     public virtual void Reset()
     {
-
         isHit = HitType.Null;
         drawHit = true;
     }
 
-    public virtual void CheckHit()
+    public virtual void CheckHit(Dictionary<NoteInput, long> inputs)
     {
+        Note n = model.Item1;
+        Beat b = model.Item2;
+        long currPosition = beatMapper.beatMap.getCursor();
+        int withinTolerance = 249;
+        bool checkMiss = currPosition > b.position;
+        long diff = Math.Abs(currPosition - b.position);
+        if (diff < withinTolerance)
+        {
 
+            if (inputs.ContainsKey(n.input))
+            {
+                long pressedAt = inputs[n.input];
+                float accuracy = (withinTolerance - Math.Abs(b.position - pressedAt)) / (float)withinTolerance;
+                if (accuracy > 0)
+                {
+                    HitType hit = HitType.Null;
+                    if (accuracy > 0.75)
+                    {
+                        hit = HitType.Perfect;
+                    }
+                    else if (accuracy > 0.50)
+                    {
+                        hit = HitType.Great;
+                    }
+                    else
+                    {
+                        hit = HitType.Good;
+                    }
+                    isHit = hit;
+                }
+            }
+        }
+        if (checkMiss && diff > withinTolerance)
+        {
+            isHit = HitType.Miss;
+        }
+    }
+
+    protected virtual void Render()
+    {
+        float percentage = (beatMapper.songPosition - startTime) / (endTime - startTime);
+        float rotation = 360f * percentage;
+        transform.rotation = Quaternion.Euler(0, 0, rotation);
+        transform.position = Vector2.LerpUnclamped(startPosition, endPosition, percentage);
+    }
+
+    protected virtual bool CheckRemove()
+    {
+        float percentage = (beatMapper.songPosition - startTime) / (endTime - startTime);
+        return percentage > 1.5 || percentage < 0;
+    }
+
+    protected virtual AccuracyController RenderHit()
+    {
+        AccuracyController ac = UnityEngine.Object.Instantiate<AccuracyController>(beatMapper.accuracyHelper.accuracy[isHit]);
+        ac.transform.position = endPosition;
+        ac.transform.parent = beatMapper.accuracyHelper.transform;
+        ac.gameObject.SetActive(true);
+        return ac;
     }
 
     void Update()
@@ -63,29 +120,23 @@ public class NoteController : MonoBehaviour
             return;
         }
 
-        float percentage = (beatMapper.songPosition - startTime) / (endTime - startTime);
-        float rotation = 360f * percentage;
-
         if (isHit == HitType.Null || isHit == HitType.Miss)
         {
-            transform.rotation = Quaternion.Euler(0, 0, rotation);
-            transform.position = Vector2.LerpUnclamped(startPosition, endPosition, percentage);
+            Render();
         } else
         {
             transform.position = new Vector2(-20, -20);
         }
 
         //TODO: drawHit feels hacky
+        //print("isHit: " + isHit + ", ac: " + ac + ", drawHit: " + drawHit);
         if (isHit != HitType.Null && ac == null && drawHit)
         {
-            ac = UnityEngine.Object.Instantiate<AccuracyController>(beatMapper.accuracyHelper.accuracy[isHit]);
-            ac.transform.position = endPosition;
-            ac.transform.parent = beatMapper.accuracyHelper.transform;
-            ac.gameObject.SetActive(true);
+            this.ac = RenderHit();
             drawHit = false;
         }
 
-        if (percentage > 1.5 || percentage < 0)
+        if (CheckRemove())
         {
             beatMapper.removeNoteController(model);
         }
