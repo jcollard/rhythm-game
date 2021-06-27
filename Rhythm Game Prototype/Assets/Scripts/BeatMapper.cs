@@ -93,7 +93,7 @@ public class BeatMapper : MonoBehaviour, Observer
     /// </summary>
     public AudioSource trackSource;
 
-    public SpriteRenderer waveForm;
+    public WaveFormController waveForm;
 
     void Start()
     {
@@ -134,6 +134,7 @@ public class BeatMapper : MonoBehaviour, Observer
                 isPlaying = false;
             }
 
+            waveForm.UpdateCursorPosition();
         }
 
         // Calculate the cursor position
@@ -253,8 +254,14 @@ public class BeatMapper : MonoBehaviour, Observer
     {
         SetCursorText();
         songPosition = beatMap.CursorPositionToSeconds(beatMap.getCursor());
+        if(trackSource.clip != null)
+        {
+            songPosition = Math.Min(songPosition, trackSource.clip.length);
+        }
+        
         bpmField.text = "" + beatMap.getBPM();
         trackSource.time = songPosition;
+        waveForm.UpdateCursorPosition();
     }
 
     private void SetCursorText()
@@ -378,7 +385,8 @@ public class BeatMapper : MonoBehaviour, Observer
                     beatMap.pathToTrack = filePath;
                     Texture2D wf = PaintWaveformSpectrum(trackSource.clip, 1.0f, 800, 100, Color.blue);
                     Sprite s = Sprite.Create(wf, new Rect(0, 0, 800, 100), Vector2.zero);
-                    waveForm.sprite = s;
+                    waveForm.spriteRenderer.sprite = s;
+                    waveForm.UpdateCursorPosition();
                     
                 }
                 catch
