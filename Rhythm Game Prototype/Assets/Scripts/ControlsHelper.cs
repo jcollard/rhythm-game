@@ -70,6 +70,7 @@ public class ControlsHelper : MonoBehaviour
             beatMapper.setBPM(bpm);
         });
 
+        //TODO: Go through UserInputManager?
         playButton.onClick.AddListener(() => beatMapper.Play());
         pauseButton.onClick.AddListener(() => beatMapper.Stop());
         stopButton.onClick.AddListener(() =>
@@ -109,7 +110,7 @@ public class ControlsHelper : MonoBehaviour
                 beatMapper.drawBeats();
                 beatMapper.doUpdate();
                 beatMapper.setBPM(beatMapper.beatMap.getBPM());
-                EditorUtility.DisplayDialog("Load Complete", "File Loaded", "Continue");
+                _ = EditorUtility.DisplayDialog("Load Complete", "File Loaded", "Continue");
             }
             catch
             {

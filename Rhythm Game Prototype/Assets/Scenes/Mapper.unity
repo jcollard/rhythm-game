@@ -2249,7 +2249,7 @@ GameObject:
   - component: {fileID: 770344242}
   - component: {fileID: 770344241}
   m_Layer: 0
-  m_Name: InputManager
+  m_Name: UserInputManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -145,7 +145,7 @@ public class BeatMap
     /// specified duration that is immediately before the current cursor
     /// </summary>
     /// <param name="duration">The duration to jump to</param>
-    private void prev(long duration)
+    public void prev(long duration)
     {
 
         long diff = cursor % duration;
@@ -169,7 +169,7 @@ public class BeatMap
     /// Moves the cursor to the next closest subdivision of the specified duration.
     /// </summary>
     /// <param name="duration">The duration to jump</param>
-    private void next(long duration)
+    public void next(long duration)
     {
         long diff = cursor % duration;
         if (diff != 0)
