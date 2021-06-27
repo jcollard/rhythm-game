@@ -22,7 +22,6 @@ public class ScratchNoteController : NoteController
 
     protected override AccuracyController RenderHit()
     {
-        print("In RenderHit");
         AccuracyController ac = UnityEngine.Object.Instantiate<AccuracyController>(beatMapper.accuracyHelper.accuracy[isHit]);
         ac.transform.position = beatMapper.positions.CENTER.position;
         ac.transform.parent = beatMapper.accuracyHelper.transform;
