@@ -95,6 +95,8 @@ public class BeatMapper : MonoBehaviour, Observer
 
     public WaveFormController waveForm;
 
+    public AccuracyHelper accuracyHelper;
+
     void Start()
     {
         // Register self as an observer on the beatMap and set the cursor to 0
@@ -332,6 +334,17 @@ public class BeatMapper : MonoBehaviour, Observer
         drawBeats();
     }
 
+    public void ShowHit(HitType type, Vector2 position)
+    {
+        if(type == HitType.Null)
+        {
+            return;
+        }
+        AccuracyController c = UnityEngine.Object.Instantiate<AccuracyController>(accuracyHelper.accuracy[type]);
+        c.transform.parent = accuracyHelper.transform;
+        c.transform.position = position;
+    }
+
     public void Play()
     {
         if (trackSource.clip != null)
@@ -350,6 +363,10 @@ public class BeatMapper : MonoBehaviour, Observer
             trackSource.Stop();
         }
         isPlaying = false;
+        foreach(NoteController controller in noteControllers.Values)
+        {
+            controller.isHit = HitType.Null;
+        }
     }
 
     public void LoadTrack(String pathToTrack)

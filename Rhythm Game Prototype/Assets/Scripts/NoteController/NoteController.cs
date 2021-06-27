@@ -18,6 +18,8 @@ public class NoteController : MonoBehaviour
     private int bpm = -1;
     public BeatMapper beatMapper;
     public Tuple<Note, Beat> model;
+    public HitType isHit = HitType.Null;
+    private AccuracyController ac = null;
 
     public void Start()
     {
@@ -51,8 +53,23 @@ public class NoteController : MonoBehaviour
         float percentage = (beatMapper.songPosition - startTime) / (endTime - startTime);
         float rotation = 360f * percentage;
 
-        transform.rotation = Quaternion.Euler(0, 0, rotation);
-        transform.position = Vector2.LerpUnclamped(startPosition, endPosition, percentage);
+        if (isHit == HitType.Null || isHit == HitType.Miss)
+        {
+            transform.rotation = Quaternion.Euler(0, 0, rotation);
+            transform.position = Vector2.LerpUnclamped(startPosition, endPosition, percentage);
+        } else
+        {
+            transform.position = new Vector2(-20, -20);
+        }
+
+
+        if (isHit != HitType.Null && ac == null)
+        {
+            ac = UnityEngine.Object.Instantiate<AccuracyController>(beatMapper.accuracyHelper.accuracy[isHit]);
+            ac.transform.position = endPosition;
+            ac.transform.parent = beatMapper.accuracyHelper.transform;
+            ac.gameObject.SetActive(true);
+        }
 
         if (percentage > 1.5 || percentage < 0)
         {

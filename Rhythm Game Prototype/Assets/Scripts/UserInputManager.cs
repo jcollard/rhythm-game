@@ -13,8 +13,6 @@ public class UserInputManager : MonoBehaviour
     public readonly Dictionary<NoteInput, long> inputs = new Dictionary<NoteInput, long>();
 
     private InputEventFactory inputEventFactory = InputEventFactory.GetInputEventFactory();
-    private String pressed = null;
-
 
     // Update is called once per frame
     void Update()
@@ -31,15 +29,49 @@ public class UserInputManager : MonoBehaviour
             {
                 e.HandleReleasedEvent(this);
             }
-            String newPressed = "Current Pressed (" + inputs.Keys.Count + "):\n";
-            foreach (NoteInput input in inputs.Keys)
-            {
-                newPressed += " " + input + "@ " + inputs[input] + "\n";
-            }
-            if (newPressed != pressed)
-            {
-                print(newPressed);
-                pressed = newPressed;
+        }
+
+        if (beatMapper.isPlaying)
+        {
+            foreach(Tuple<Note, Beat> toCheck in beatMapper.noteControllers.Keys){
+                if(beatMapper.noteControllers[toCheck].isHit != HitType.Null)
+                {
+                    continue;
+                }
+                Note n = toCheck.Item1;
+                Beat b = toCheck.Item2;
+                long currPosition = beatMapper.beatMap.getCursor();
+                int withinTolerance = 249;
+                bool checkMiss = currPosition > b.position;
+                long diff = Math.Abs(currPosition - b.position);
+                if (diff < withinTolerance)
+                {
+                    
+                    if (inputs.ContainsKey(n.input))
+                    {
+                        long pressedAt = inputs[n.input];
+                        float accuracy = (withinTolerance - Math.Abs(b.position - pressedAt))/(float)withinTolerance;
+                        if (accuracy > 0)
+                        {
+                            HitType hit = HitType.Null;
+                            if(accuracy > 0.75)
+                            {
+                                hit = HitType.Perfect;
+                            } else if (accuracy > 0.50)
+                            {
+                                hit = HitType.Great;
+                            } else
+                            {
+                                hit = HitType.Good;
+                            }
+                            beatMapper.noteControllers[toCheck].isHit = hit;
+                        }
+                    }
+                }
+                if (checkMiss && diff > withinTolerance) {
+                    beatMapper.noteControllers[toCheck].isHit = HitType.Miss;
+                }
+
             }
         }
 
