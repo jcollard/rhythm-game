@@ -20,6 +20,7 @@ public class NoteController : MonoBehaviour
     public Tuple<Note, Beat> model;
     public HitType isHit = HitType.Null;
     private AccuracyController ac = null;
+    private bool drawHit = true;
 
     public void Start()
     {
@@ -43,6 +44,18 @@ public class NoteController : MonoBehaviour
         endTime = beatMapper.beatMap.CursorPositionToSeconds(b.position);
     }
 
+    public virtual void Reset()
+    {
+
+        isHit = HitType.Null;
+        drawHit = true;
+    }
+
+    public virtual void CheckHit()
+    {
+
+    }
+
     void Update()
     {
         if (beatMapper == null)
@@ -62,13 +75,14 @@ public class NoteController : MonoBehaviour
             transform.position = new Vector2(-20, -20);
         }
 
-
-        if (isHit != HitType.Null && ac == null)
+        //TODO: drawHit feels hacky
+        if (isHit != HitType.Null && ac == null && drawHit)
         {
             ac = UnityEngine.Object.Instantiate<AccuracyController>(beatMapper.accuracyHelper.accuracy[isHit]);
             ac.transform.position = endPosition;
             ac.transform.parent = beatMapper.accuracyHelper.transform;
             ac.gameObject.SetActive(true);
+            drawHit = false;
         }
 
         if (percentage > 1.5 || percentage < 0)

@@ -365,7 +365,7 @@ public class BeatMapper : MonoBehaviour, Observer
         isPlaying = false;
         foreach(NoteController controller in noteControllers.Values)
         {
-            controller.isHit = HitType.Null;
+            controller.Reset();
         }
     }
 
