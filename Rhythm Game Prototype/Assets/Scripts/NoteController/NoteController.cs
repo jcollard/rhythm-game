@@ -18,9 +18,15 @@ public class NoteController : MonoBehaviour
     private int bpm = -1;
     public BeatMapper beatMapper;
     public Tuple<Note, Beat> model;
-    public HitType isHit = HitType.Null;
+    protected HitType isHit = HitType.Null;
     private AccuracyController ac = null;
     private bool drawHit = true;
+
+
+    public HitType GetIsHit()
+    {
+        return isHit;
+    }
 
     public void Start()
     {

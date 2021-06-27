@@ -34,7 +34,7 @@ public class UserInputManager : MonoBehaviour
         if (beatMapper.isPlaying)
         {
             foreach(NoteController toCheck in beatMapper.noteControllers.Values){
-                if(toCheck.isHit != HitType.Null)
+                if(toCheck.GetIsHit() != HitType.Null)
                 {
                     continue;
                 }
