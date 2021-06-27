@@ -408,7 +408,7 @@ public class BeatMapper : MonoBehaviour, Observer
         {
             for (int y = 0; y < height; y++)
             {
-                tex.SetPixel(x, y, Color.black);
+                tex.SetPixel(x, y, new Color(0, 0, 0, 0.25f));
             }
         }
 
