@@ -65,6 +65,7 @@ public class ControlsHelper : MonoBehaviour
 
         bpm.onEndEdit.AddListener((String newBPM) =>
         {
+            print("Edit End: " + newBPM);
             int bpm = int.Parse(newBPM);
             beatMapper.setBPM(bpm);
         });

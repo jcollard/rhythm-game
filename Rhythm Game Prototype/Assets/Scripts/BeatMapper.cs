@@ -254,6 +254,7 @@ public class BeatMapper : MonoBehaviour, Observer
     /// </summary>
     public void doUpdate()
     {
+        print("Doing update");
         SetCursorText();
         songPosition = beatMap.CursorPositionToSeconds(beatMap.getCursor());
         if(trackSource.clip != null)

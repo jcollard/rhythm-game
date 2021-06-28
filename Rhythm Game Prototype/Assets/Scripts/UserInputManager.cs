@@ -97,12 +97,12 @@ public class Controls
     public String Circle = "k";
     public String X = "l";
     public String Scratch = "space";
-    public String NextBeat = "5";
-    public String PrevBeat = "4";
-    public String NextHalfBeat = "3";
-    public String PrevHalfBeat = "2";
-    public String NextQuarterBeat = "1";
-    public String PrevQuarterBeat = "=";
+    public String NextBeat = "b";
+    public String PrevBeat = "v";
+    public String NextHalfBeat = "c";
+    public String PrevHalfBeat = "x";
+    public String NextQuarterBeat = "t";
+    public String PrevQuarterBeat = "r";
     public String Play = "q";
     public String Pause = "w";
     public String Stop = "e";
