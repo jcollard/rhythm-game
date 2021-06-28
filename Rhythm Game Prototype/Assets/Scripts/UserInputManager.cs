@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 public class UserInputManager : MonoBehaviour
@@ -61,28 +63,69 @@ public class InputEventFactory
 
     public InputEventFactory()
     {
-        factories.Add("Up", new NoteEvent("d", NoteInput.Up));
-        factories.Add("Left", new NoteEvent("s", NoteInput.Left));
-        factories.Add("Down", new NoteEvent("a", NoteInput.Down));
-        factories.Add("Triangle", new NoteEvent("j", NoteInput.Triangle));
-        factories.Add("Circle", new NoteEvent("k", NoteInput.Circle));
-        factories.Add("X", new NoteEvent("l", NoteInput.X));
-        factories.Add("Scratch", new NoteEvent("space", NoteInput.Scratch));
+        Controls c = Controls.Load();
+        factories.Add("Up", new NoteEvent(c.Up, NoteInput.Up));
+        factories.Add("Left", new NoteEvent(c.Left, NoteInput.Left));
+        factories.Add("Down", new NoteEvent(c.Down, NoteInput.Down));
+        factories.Add("Triangle", new NoteEvent(c.Triangle, NoteInput.Triangle));
+        factories.Add("Circle", new NoteEvent(c.Circle, NoteInput.Circle));
+        factories.Add("X", new NoteEvent(c.X, NoteInput.X));
+        factories.Add("Scratch", new NoteEvent(c.Scratch, NoteInput.Scratch));
 
-        factories.Add("Next Beat", new ChangeCursorEvent("5", BeatMap.BEAT));
-        factories.Add("Next Half Beat", new ChangeCursorEvent("4", BeatMap.HALF));
-        factories.Add("Next Quarter Beat", new ChangeCursorEvent("3", BeatMap.QUARTER));
-        factories.Add("Previous Beat", new ChangeCursorEvent("=", -BeatMap.BEAT));
-        factories.Add("Previous Half Beat", new ChangeCursorEvent("1", -BeatMap.HALF));
-        factories.Add("Previous Quarter Beat", new ChangeCursorEvent("2", -BeatMap.QUARTER));
+        factories.Add("Next Beat", new ChangeCursorEvent(c.NextBeat, BeatMap.BEAT));
+        factories.Add("Next Half Beat", new ChangeCursorEvent(c.NextHalfBeat, BeatMap.HALF));
+        factories.Add("Next Quarter Beat", new ChangeCursorEvent(c.NextQuarterBeat, BeatMap.QUARTER));
+        factories.Add("Previous Beat", new ChangeCursorEvent(c.PrevBeat, -BeatMap.BEAT));
+        factories.Add("Previous Half Beat", new ChangeCursorEvent(c.PrevHalfBeat, -BeatMap.HALF));
+        factories.Add("Previous Quarter Beat", new ChangeCursorEvent(c.PrevQuarterBeat, -BeatMap.QUARTER));
 
-        factories.Add("Play", new PlayEvent("q"));
-        factories.Add("Pause", new PauseEvent("w"));
-        factories.Add("Stop", new StopEvent("e"));
+        factories.Add("Play", new PlayEvent(c.Play));
+        factories.Add("Pause", new PauseEvent(c.Pause));
+        factories.Add("Stop", new StopEvent(c.Stop));
 
     }
 
 }
+
+[Serializable]
+public class Controls
+{
+    public String Up = "f";
+    public String Left = "d";
+    public String Down = "s";
+    public String Triangle = "j";
+    public String Circle = "k";
+    public String X = "l";
+    public String Scratch = "space";
+    public String NextBeat = "5";
+    public String PrevBeat = "4";
+    public String NextHalfBeat = "3";
+    public String PrevHalfBeat = "2";
+    public String NextQuarterBeat = "1";
+    public String PrevQuarterBeat = "=";
+    public String Play = "q";
+    public String Pause = "w";
+    public String Stop = "e";
+
+    public static Controls Load()
+    {
+        if (!File.Exists("./inputs.json"))
+        {
+            Controls c = new Controls();
+            File.WriteAllText("./inputs.json", JsonUtility.ToJson(c));
+            return c;
+        }
+        try
+        {
+            String json = File.ReadAllText("./inputs.json");
+            return JsonUtility.FromJson<Controls>(json);
+        } catch { 
+            //EditorUtility.DisplayDialog("Could not Load Config", "Could not load config, loaded default controls.", "Continue");
+            return new Controls();
+        }
+    }
+
+} 
 
 public interface UserInputEvent
 {

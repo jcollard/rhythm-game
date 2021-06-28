@@ -1,0 +1,18 @@
+{
+    "Up":"f",
+    "Left":"d",
+    "Down":"s",
+    "Triangle":"j",
+    "Circle":"k",
+    "X":"l",
+    "Scratch":"space",
+    "NextBeat":"5",
+    "PrevBeat":"4",
+    "NextHalfBeat":"3",
+    "PrevHalfBeat":"2",
+    "NextQuarterBeat":"1",
+    "PrevQuarterBeat":"=",
+    "Play":"q",
+    "Pause":"w",
+    "Stop":"e"
+ }
