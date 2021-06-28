@@ -120,7 +120,6 @@ public class Controls
             String json = File.ReadAllText("./inputs.json");
             return JsonUtility.FromJson<Controls>(json);
         } catch { 
-            //EditorUtility.DisplayDialog("Could not Load Config", "Could not load config, loaded default controls.", "Continue");
             return new Controls();
         }
     }

@@ -1,11 +1,9 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 using System.IO;
-using UnityEngine.Networking;
+using OxOD;
 
 /// <summary>
 /// A Helper Class for specifying how UI controls work.
@@ -43,6 +41,7 @@ public class ControlsHelper : MonoBehaviour
     [Header("Save/Load")]
     public Button saveButton;
     public Button loadButton;
+    public FileDialog fileDialog;
 
     [Header("Beat Mapper")]
     public BeatMapper beatMapper;
@@ -90,19 +89,24 @@ public class ControlsHelper : MonoBehaviour
         nextFactory.onClick.AddListener(() => beatMapper.nextFactory());
         prevFactory.onClick.AddListener(() => beatMapper.prevFactory());
 
-        loadButton.onClick.AddListener(() =>
+        loadButton.onClick.AddListener(() => StartCoroutine(LoadFile()));
+
+        saveButton.onClick.AddListener(() => StartCoroutine(SaveFile()));
+
+        setTrackButton.onClick.AddListener(() => StartCoroutine(LoadTrack()));
+    }
+
+    public IEnumerator LoadFile()
+    {
+
+        yield return fileDialog.Open();
+
+        if (fileDialog.result != null)
         {
-            String file = EditorUtility.OpenFilePanel("Open File", "", "");
-
-            if (file == "")
-            {
-                return;
-            }
-
             try
             {
-                beatMapper.beatMap = BeatMap.Deserialize(file);
-                if(beatMapper.beatMap.pathToTrack != null)
+                beatMapper.beatMap = BeatMap.Deserialize(fileDialog.result);
+                if (beatMapper.beatMap.pathToTrack != null)
                 {
                     beatMapper.LoadTrack(beatMapper.beatMap.pathToTrack);
                 }
@@ -110,51 +114,46 @@ public class ControlsHelper : MonoBehaviour
                 beatMapper.drawBeats();
                 beatMapper.doUpdate();
                 beatMapper.setBPM(beatMapper.beatMap.getBPM());
-                _ = EditorUtility.DisplayDialog("Load Complete", "File Loaded", "Continue");
+                //TODO: Add Dialog to display success
             }
             catch
             {
-                EditorUtility.DisplayDialog("Unable to Open File", "Could not Open File", "Continue");
+                //TODO: Add Dialog to display failure message
             }
-            //beatMapper.beatMap.Serialize("test.file");
-        });
+        }
+    }
 
-        saveButton.onClick.AddListener(() =>
+    public IEnumerator SaveFile()
+    {
+        yield return fileDialog.Save();
+        if (fileDialog.result != null)
         {
-            String file = EditorUtility.SaveFilePanel("Save File", "", beatMapper.beatMap.name, "beatMap");
-            if (file == "")
-            {
-                return;
-            }
 
             try
             {
 
-                String[] path = file.Split(Path.DirectorySeparatorChar);
+                String[] path = fileDialog.result.Split(Path.DirectorySeparatorChar);
                 beatMapper.beatMap.name = path[path.Length - 1];
-                beatMapper.beatMap.Serialize(file);
-                EditorUtility.DisplayDialog("File Saved", "File Saved", "Continue");
+                beatMapper.beatMap.Serialize(fileDialog.result);
+                //TODO: Add Dialog to display success
 
             }
             catch
             {
-                EditorUtility.DisplayDialog("Unable to Save File", "Could not Open File", "Continue");
+                //TODO: Add Dialog to display failure message
             }
-
-        });
-
-        setTrackButton.onClick.AddListener(() =>
-        {
-            string file = EditorUtility.OpenFilePanel("Open File", "", "mp3");
-            if (file == "")
-            {
-                return;
-            }
-
-            beatMapper.LoadTrack(file);
-
-        });
+        }
     }
 
-    
+    public IEnumerator LoadTrack()
+    {
+        yield return fileDialog.Open();
+        if (fileDialog.result != null)
+        {
+            beatMapper.LoadTrack(fileDialog.result);
+            //TODO: Add Dialog to display success
+        }
+    }
+
+
 }

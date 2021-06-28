@@ -367,7 +367,7 @@ public class BeatMapper : MonoBehaviour, Observer
         }
         catch
         {
-            EditorUtility.DisplayDialog("Unable to Load File", "Could not Load Audio File", "Continue");
+            //TODO: Add Dialog to display failure message
         }
     }
 
@@ -380,7 +380,7 @@ public class BeatMapper : MonoBehaviour, Observer
 
             if (www.result == UnityWebRequest.Result.ConnectionError)
             {
-                EditorUtility.DisplayDialog("Could not load track", www.error, "Continue");
+                //TODO: Add Dialog to display failure message
             }
             else
             {
@@ -397,7 +397,7 @@ public class BeatMapper : MonoBehaviour, Observer
                 }
                 catch
                 {
-                    EditorUtility.DisplayDialog("Could not load track", "Could not load " + filePath, "Continue");
+                    //TODO: Add Dialog to display failure message
                     beatMap.pathToTrack = null;
                 }
             }
