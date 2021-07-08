@@ -23,6 +23,7 @@ public class ControlsHelper : MonoBehaviour
     public Button playButton;
     public Button stopButton;
     public Button pauseButton;
+    public Button syncButton;
     public Button setTrackButton;
     public AudioSource trackSource;
 
@@ -95,6 +96,8 @@ public class ControlsHelper : MonoBehaviour
         saveButton.onClick.AddListener(() => StartCoroutine(SaveFile()));
 
         setTrackButton.onClick.AddListener(() => StartCoroutine(LoadTrack()));
+
+        syncButton.onClick.AddListener(() => beatMapper.StartSynching());
     }
 
     public IEnumerator LoadFile()

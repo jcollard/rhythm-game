@@ -97,6 +97,8 @@ public class BeatMapper : MonoBehaviour, Observer
 
     public AccuracyHelper accuracyHelper;
 
+    public bool isSynching = false;
+
     void Start()
     {
         // Register self as an observer on the beatMap and set the cursor to 0
@@ -131,12 +133,20 @@ public class BeatMapper : MonoBehaviour, Observer
                 songPosition = trackSource.time;
             }
 
+            // Check if we have reached the end of the song
             if (trackSource.clip != null && !trackSource.isPlaying)
             {
                 isPlaying = false;
+                //TODO: Stop syncing when the song goes to the end
             }
 
             waveForm.UpdateCursorPosition();
+        }
+
+        
+        if(isSynching){
+            //TODO: Track when the user presses T, this will indicate where a beat falls in the music
+            //      The beat is now set to the current songPosition, and we increment to the next beat
         }
 
         // Calculate the cursor position
@@ -438,6 +448,15 @@ public class BeatMapper : MonoBehaviour, Observer
         tex.Apply();
 
         return tex;
+    }
+
+    public void StartSynching()
+    {
+        //TODO: Only allow synching if a track is set
+        //TODO: Clear out synching data structure
+        //TODO: Set the song to the beginning
+        //TODO: Start Playing?
+        Debug.Log("StartSynching working");
     }
 
 
