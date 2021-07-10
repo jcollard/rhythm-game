@@ -99,6 +99,10 @@ public class BeatMapper : MonoBehaviour, Observer
 
     public bool isSynching = false;
 
+    public BeatSync beatSync;
+
+    private long currentBeat;
+
     void Start()
     {
         // Register self as an observer on the beatMap and set the cursor to 0
@@ -116,6 +120,33 @@ public class BeatMapper : MonoBehaviour, Observer
         // Select the current factory
         newFactory(noteFactoryHelper.factories[factoryIndex]);
 
+        beatSync = new BeatSync(beatMap);
+        TestStuff();
+    }
+
+    public static void TestStuff()
+    {
+        
+        BeatSync test = new BeatSync(new BeatMap(120));
+        // In constructor we create (0, 0) => [ DoubleRange(0, 1) ]
+        test.SetBeatAtSecond(1000, 2.0);
+        // Adds in another beat (2, 1000) => [ DoubleRange(0, 1), DoubleRange(2, 3) ]
+
+        List<Tuple<double, long>> list = test.GetTuplesNearSecond(1.0);
+        list.ForEach((item) =>
+        {
+            print(item.Item1 + " , " + item.Item2);
+        });
+        Tuple<double, long> before = new Tuple<double, long>(0, 0);
+        Tuple<double, long> after = new Tuple<double, long>(2, 1000);
+        print(test.SecondsToBeat(1.5, before, after));
+        return;
+        // Shoudl be 500
+        long result = test.SecondsToBeat(1.0); // <= DoubleRange(1, 2)
+        print(result);
+        test.SetBeatAtSecond(2000, 4.0);
+        /// Should be 1500
+        print(test.SecondsToBeat(6.0));
     }
 
     void Update()
@@ -138,6 +169,7 @@ public class BeatMapper : MonoBehaviour, Observer
             {
                 isPlaying = false;
                 //TODO: Stop syncing when the song goes to the end
+                isSynching = false;
             }
 
             waveForm.UpdateCursorPosition();
@@ -147,6 +179,15 @@ public class BeatMapper : MonoBehaviour, Observer
         if(isSynching){
             //TODO: Track when the user presses T, this will indicate where a beat falls in the music
             //      The beat is now set to the current songPosition, and we increment to the next beat
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                currentBeat += 1;
+                long cursorPosition = beatMap.SecondsToCursorPosition(songPosition);
+                beatMap.setCursor(cursorPosition);
+                beatSync.SetBeatAtSecond(currentBeat, songPosition);
+
+
+            }
         }
 
         // Calculate the cursor position
@@ -169,6 +210,8 @@ public class BeatMapper : MonoBehaviour, Observer
         }
         drawBeats();
     }
+
+
 
     /// <summary>
     /// Draws the beats that from 2 BEAT after they should hit to beatsVisible
@@ -456,7 +499,16 @@ public class BeatMapper : MonoBehaviour, Observer
         //TODO: Clear out synching data structure
         //TODO: Set the song to the beginning
         //TODO: Start Playing?
-        Debug.Log("StartSynching working");
+        if(trackSource.clip != null){
+            isSynching = true;
+            beatMap.setCursor(0);
+            currentBeat = 0;
+            beatSync = new BeatSync(beatMap);
+            
+            isPlaying = true;
+        }else{
+            Debug.Log("Select Track");
+        }
     }
 
 
