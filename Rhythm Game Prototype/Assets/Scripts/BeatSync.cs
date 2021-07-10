@@ -28,7 +28,26 @@ public class BeatSync: MonoBehaviour
 
     private long SecondsToBeat(double second, List<Tuple<double, long>> lookup)
     {
-        return 0;
+        Tuple<double, long> before = new Tuple<double, long>(Double.NegativeInfinity, long.MinValue);
+        double secondCurrent = second;
+        Tuple<double, long> after = new Tuple<double, long>(Double.PositiveInfinity, long.MaxValue);
+
+        lookup.ForEach((Tuple<double, long> item) =>
+        {
+            if(item.Item1 < secondCurrent && item.Item1 > before.Item1)
+            {
+                before = item;
+            }
+
+
+            if (item.Item1 > secondCurrent && item.Item1 < after.Item1)
+            {
+                after = item;
+            }
+
+        });
+
+        return SecondsToBeat(second, before, after);
     }
 
     public List<Tuple<double, long>> GetTuplesNearSecond(double second)
