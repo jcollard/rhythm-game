@@ -18,6 +18,7 @@ public class CountDownSynch : MonoBehaviour
 
     public void displayCountDown()
     {
+        countdownText.gameObject.SetActive(true);
         showCountdown = true;
         timeRemaining = 3;
     }
@@ -28,7 +29,7 @@ public class CountDownSynch : MonoBehaviour
         if (showCountdown)
         {
             timeRemaining -= Time.deltaTime;
-            countdownText.text = ((int)timeRemaining).ToString();
+            countdownText.text = ((int)timeRemaining + 1).ToString();
 
             if (timeRemaining <= 0 && !beatMapper.isPlaying)
             {
