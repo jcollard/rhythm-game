@@ -17,16 +17,7 @@ public class BeatSync: MonoBehaviour
         SetBeatAtSecond(0, 0);
     }
 
-    public long SecondsToBeat(double second, Tuple<double, long> before, Tuple<double, long> after)
-    {
-        double totalSeconds = after.Item1 - before.Item1;
-        long totalBeats = after.Item2 - before.Item2;
-        double distanceFromBeginning = second - before.Item1;
-        double percentFromFirstBeat = distanceFromBeginning / totalSeconds;
-        return (long)(totalBeats * percentFromFirstBeat) + before.Item2;
-    }
-
-    private long SecondsToBeat(double second, List<Tuple<double, long>> lookup)
+    public long SecondsToBeat(double second, List<Tuple<double, long>> lookup)
     {
         Tuple<double, long> before = new Tuple<double, long>(Double.NegativeInfinity, long.MinValue);
         double secondCurrent = second;
@@ -34,7 +25,7 @@ public class BeatSync: MonoBehaviour
 
         lookup.ForEach((Tuple<double, long> item) =>
         {
-            if(item.Item1 < secondCurrent && item.Item1 > before.Item1)
+            if(item.Item1 <= secondCurrent && item.Item1 > before.Item1)
             {
                 before = item;
             }
@@ -47,7 +38,16 @@ public class BeatSync: MonoBehaviour
 
         });
 
-        return SecondsToBeat(second, before, after);
+        return CalculateSecondsToBeat(second, before, after);
+    }
+
+    public long CalculateSecondsToBeat(double second, Tuple<double, long> before, Tuple<double, long> after)
+    {
+        double totalSeconds = after.Item1 - before.Item1;
+        long totalBeats = after.Item2 - before.Item2;
+        double distanceFromBeginning = second - before.Item1;
+        double percentFromFirstBeat = distanceFromBeginning / totalSeconds;
+        return (long)(totalBeats * percentFromFirstBeat) + before.Item2;
     }
 
     public List<Tuple<double, long>> GetTuplesNearSecond(double second)
@@ -57,7 +57,6 @@ public class BeatSync: MonoBehaviour
         DoubleRange after = new DoubleRange(Int32.MaxValue, Int32.MaxValue);
         foreach(DoubleRange range in _beatSynch.Keys)
         {
-            print(range);
             //TODO: Check if range is less than current
             //      if it is, if it is greater than before, update before
             if(range.MIN < current.MIN && range.MIN > before.MIN)
@@ -108,78 +107,9 @@ public class BeatSync: MonoBehaviour
     /// <returns>the nearest Beat valu</returns>
     public long SecondsToBeat(double second)
     {
-        //TODO: ensure second is > 0
-        DoubleRange secondRange = new DoubleRange((int)Math.Floor(second), (int)Math.Ceiling(second));
-        //TODO: If the secondRange is not in _beatSynch, we need to find the range that comes before and after it.
-        if (!_beatSynch.ContainsKey(secondRange))
-        {
-            // GetRange Before and After this one
-        }
-        if (_beatSynch.ContainsKey(secondRange))
-        {
-            List<Tuple<double, long>> beatRange = _beatSynch[secondRange];
-
-            Tuple<double, long> closestBefore = null;
-            Tuple<double, long> closestAfter = null;
-
-            if (beatRange[0].Item1 > second) {
-                //TODO: The last beat in the previous DoubleRange, is the closestBefore
-            }
-            //TODO: Loop through and find closestBefore / closestAfter
-            foreach(Tuple<double, long> tuple in beatRange) {
-                if(closestBefore == null) {
-                    //TODO: Check if the current double is less than second, if so, update closestBefore
-                    if(tuple.Item1 < second)
-                    {
-                        closestBefore = tuple;
-                    }
-                } else if (closestAfter == null)
-                {
-                    //TODO: Check if the current double is greater than second, if so, update closestAfter
-                    if (tuple.Item1 > second)
-                    {
-                        closestAfter = tuple;
-                    }
-                } else
-                {
-                    break;
-                }
-            }
-
-            //TODO: If we get through the loop and closestBefore is not found, then closetBefore = <0.0, 0> (maybe solved by constructor)
-            if(closestBefore == null)
-            {
-                closestBefore = new Tuple<double, long>(0, 0);
-            }
-
-            //TODO: If we loop through everything and closestAfter is not found closestAfter must be first in next DoubleRange
-            // If we are at the end of the song and there is no next Double Range, what do we do?
-            // We could interpret it using the last 2 entries in the entire beatSynch
-            if(closestAfter == null)
-            {
-                DoubleRange nextRange = new DoubleRange((int)Math.Floor(second) + 1, (int)Math.Ceiling(second) + 1);
-                if(nextRange != null)
-                {
-                    List<Tuple<double, long>> bextBeatRange = _beatSynch[nextRange];
-                    closestAfter = bextBeatRange[0];
-                }
-                else
-                {
-                    closestAfter = beatRange[beatRange.Count - 1];
-                }
-               
-            }
-
-            double totalSeconds = closestAfter.Item1 - closestBefore.Item1;
-            long totalBeats = closestAfter.Item2 - closestBefore.Item2;
-            double distanceFromBeginning = second - closestBefore.Item1;
-            double percentFromFirstBeat = distanceFromBeginning / totalSeconds;
-            return (long)(totalBeats * percentFromFirstBeat) + closestBefore.Item2;
-        }
-        else
-        {
-            throw new Exception("Second not in BeatSync range " + second);
-        }
+        List<Tuple<double, long>> list = GetTuplesNearSecond(second);
+        long beat = SecondsToBeat(second, list);
+        return beat;
     }
 
     /// <summary>
@@ -207,7 +137,18 @@ public class BeatSync: MonoBehaviour
     }
 
 
-    
+    public override string ToString()
+    {
+        int totalBeats = 0;
+        foreach(List<Tuple<double, long>> ls in _beatSynch.Values)
+        {
+            totalBeats += ls.Count;
+        }
+
+        return "BeatSync: Seconds - " + _beatSynch.Count + " , Beats - " + totalBeats;
+    }
+
+
 
 
 }

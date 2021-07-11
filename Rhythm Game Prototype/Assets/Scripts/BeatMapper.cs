@@ -21,6 +21,8 @@ public class BeatMapper : MonoBehaviour, Observer
     /// </summary>
     public int beatsVisible = 4;
 
+    public CountDownSynch countDownSync;
+
     /// <summary>
     /// Determines if the BeatMap's cursor should be updated based on
     /// Time.deltaTime
@@ -121,7 +123,7 @@ public class BeatMapper : MonoBehaviour, Observer
         newFactory(noteFactoryHelper.factories[factoryIndex]);
 
         beatSync = new BeatSync(beatMap);
-        TestStuff();
+        //TestStuff();
     }
 
     public static void TestStuff()
@@ -129,24 +131,30 @@ public class BeatMapper : MonoBehaviour, Observer
         
         BeatSync test = new BeatSync(new BeatMap(120));
         // In constructor we create (0, 0) => [ DoubleRange(0, 1) ]
+        //test.SetBeatAtSecond(0, 0);
         test.SetBeatAtSecond(1000, 2.0);
-        // Adds in another beat (2, 1000) => [ DoubleRange(0, 1), DoubleRange(2, 3) ]
 
-        List<Tuple<double, long>> list = test.GetTuplesNearSecond(1.0);
-        list.ForEach((item) =>
-        {
-            print(item.Item1 + " , " + item.Item2);
-        });
-        Tuple<double, long> before = new Tuple<double, long>(0, 0);
-        Tuple<double, long> after = new Tuple<double, long>(2, 1000);
-        print(test.SecondsToBeat(1.5, before, after));
+        test.SetBeatAtSecond(1400, 3.5);
+
+        test.SetBeatAtSecond(3600, 4.85);
+
+        test.SetBeatAtSecond(4020, 5.12);
+
+        test.SetBeatAtSecond(5768, 6.5);
+
+        print("0 == " + test.SecondsToBeat(0));  //TODO: Should be 0
+        print("500 == " + test.SecondsToBeat(1));  //TODO: Should be 500
+        // This is getting before = 0, and after = 3.5
+        // This should get before = 2.0, and after = 3.5
+        print("~1000 == " + test.SecondsToBeat(2));  //TODO: Should be ~1000
+        print("(1000, 1400) " + test.SecondsToBeat(3));  //TODO: Between 1000 and 1400
+        print("(1400, 3600) " + test.SecondsToBeat(4));  //TOTO: Between 1400 3600
+        print("(3600, 4020) " + test.SecondsToBeat(5));  //TODO: Between 3600 4020
+        print("(4020, 5768) " + test.SecondsToBeat(6));  //TODO: Between 4020 5768
+        // Currently this last one is set to exactly the last beat 5768, is this what we want?
+        print("(> 5768) " + test.SecondsToBeat(7));  //TODO: Above 5768
+
         return;
-        // Shoudl be 500
-        long result = test.SecondsToBeat(1.0); // <= DoubleRange(1, 2)
-        print(result);
-        test.SetBeatAtSecond(2000, 4.0);
-        /// Should be 1500
-        print(test.SecondsToBeat(6.0));
     }
 
     void Update()
@@ -184,9 +192,8 @@ public class BeatMapper : MonoBehaviour, Observer
                 currentBeat += 1;
                 long cursorPosition = beatMap.SecondsToCursorPosition(songPosition);
                 beatMap.setCursor(cursorPosition);
-                beatSync.SetBeatAtSecond(currentBeat, songPosition);
-
-
+                beatSync.SetBeatAtSecond(currentBeat * BeatMap.BEAT, songPosition);
+                print(beatSync);
             }
         }
 
@@ -500,15 +507,20 @@ public class BeatMapper : MonoBehaviour, Observer
         //TODO: Set the song to the beginning
         //TODO: Start Playing?
         if(trackSource.clip != null){
-            isSynching = true;
-            beatMap.setCursor(0);
-            currentBeat = 0;
-            beatSync = new BeatSync(beatMap);
-            
-            isPlaying = true;
-        }else{
+            countDownSync.displayCountDown();
+        }
+        else{
             Debug.Log("Select Track");
         }
+    }
+
+    public void StartPlaySynch()
+    {
+        isSynching = true;
+        beatMap.setCursor(0);
+        currentBeat = 0;
+        beatSync = new BeatSync(beatMap);
+        Play();
     }
 
 
