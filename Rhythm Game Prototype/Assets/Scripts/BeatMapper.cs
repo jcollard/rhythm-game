@@ -21,6 +21,8 @@ public class BeatMapper : MonoBehaviour, Observer
     /// </summary>
     public int beatsVisible = 4;
 
+    public CountDownSynch countDownSync;
+
     /// <summary>
     /// Determines if the BeatMap's cursor should be updated based on
     /// Time.deltaTime
@@ -97,6 +99,12 @@ public class BeatMapper : MonoBehaviour, Observer
 
     public AccuracyHelper accuracyHelper;
 
+    public bool isSynching = false;
+
+    public BeatSync beatSync;
+
+    private long currentBeat;
+
     void Start()
     {
         // Register self as an observer on the beatMap and set the cursor to 0
@@ -114,6 +122,39 @@ public class BeatMapper : MonoBehaviour, Observer
         // Select the current factory
         newFactory(noteFactoryHelper.factories[factoryIndex]);
 
+        beatSync = new BeatSync(beatMap);
+        //TestStuff();
+    }
+
+    public static void TestStuff()
+    {
+        
+        BeatSync test = new BeatSync(new BeatMap(120));
+        // In constructor we create (0, 0) => [ DoubleRange(0, 1) ]
+        //test.SetBeatAtSecond(0, 0);
+        test.SetBeatAtSecond(1000, 2.0);
+
+        test.SetBeatAtSecond(1400, 3.5);
+
+        test.SetBeatAtSecond(3600, 4.85);
+
+        test.SetBeatAtSecond(4020, 5.12);
+
+        test.SetBeatAtSecond(5768, 6.5);
+
+        print("0 == " + test.SecondsToBeat(0));  //TODO: Should be 0
+        print("500 == " + test.SecondsToBeat(1));  //TODO: Should be 500
+        // This is getting before = 0, and after = 3.5
+        // This should get before = 2.0, and after = 3.5
+        print("~1000 == " + test.SecondsToBeat(2));  //TODO: Should be ~1000
+        print("(1000, 1400) " + test.SecondsToBeat(3));  //TODO: Between 1000 and 1400
+        print("(1400, 3600) " + test.SecondsToBeat(4));  //TOTO: Between 1400 3600
+        print("(3600, 4020) " + test.SecondsToBeat(5));  //TODO: Between 3600 4020
+        print("(4020, 5768) " + test.SecondsToBeat(6));  //TODO: Between 4020 5768
+        // Currently this last one is set to exactly the last beat 5768, is this what we want?
+        print("(> 5768) " + test.SecondsToBeat(7));  //TODO: Above 5768
+
+        return;
     }
 
     void Update()
@@ -131,12 +172,29 @@ public class BeatMapper : MonoBehaviour, Observer
                 songPosition = trackSource.time;
             }
 
+            // Check if we have reached the end of the song
             if (trackSource.clip != null && !trackSource.isPlaying)
             {
                 isPlaying = false;
+                //TODO: Stop syncing when the song goes to the end
+                isSynching = false;
             }
 
             waveForm.UpdateCursorPosition();
+        }
+
+        
+        if(isSynching){
+            //TODO: Track when the user presses T, this will indicate where a beat falls in the music
+            //      The beat is now set to the current songPosition, and we increment to the next beat
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                currentBeat += 1;
+                long cursorPosition = beatMap.SecondsToCursorPosition(songPosition);
+                beatMap.setCursor(cursorPosition);
+                beatSync.SetBeatAtSecond(currentBeat * BeatMap.BEAT, songPosition);
+                print(beatSync);
+            }
         }
 
         // Calculate the cursor position
@@ -159,6 +217,8 @@ public class BeatMapper : MonoBehaviour, Observer
         }
         drawBeats();
     }
+
+
 
     /// <summary>
     /// Draws the beats that from 2 BEAT after they should hit to beatsVisible
@@ -438,6 +498,29 @@ public class BeatMapper : MonoBehaviour, Observer
         tex.Apply();
 
         return tex;
+    }
+
+    public void StartSynching()
+    {
+        //TODO: Only allow synching if a track is set
+        //TODO: Clear out synching data structure
+        //TODO: Set the song to the beginning
+        //TODO: Start Playing?
+        if(trackSource.clip != null){
+            countDownSync.displayCountDown();
+        }
+        else{
+            Debug.Log("Select Track");
+        }
+    }
+
+    public void StartPlaySynch()
+    {
+        isSynching = true;
+        beatMap.setCursor(0);
+        currentBeat = 0;
+        beatSync = new BeatSync(beatMap);
+        Play();
     }
 
 
